@@ -32,6 +32,20 @@ pythagoras :: Integer -> Integer -> Integer -> Bool
 pythagoras x y z 	= x * x + y * y == z * z
 
 -- -----------------------------------------------------------------------
+form1NonCnf = Neg (Dsj[p,q])
+form1Cnf = Cnj [Neg(p),Neg(q)]
+form2NonCnf = Dsj [(Cnj [p,q]),r]
+form2Cnf = Cnj [(Dsj [p,r]),(Dsj [q,r])]
+
+testCnf :: Bool
+testCnf = testCnf1 && testCnf2
+
+testCnf1 :: Bool
+testCnf1 = (cnf form1NonCnf) == form1Cnf
+
+testCnf2 :: Bool
+testCnf2 = (cnf form2NonCnf) == form2Cnf
+
 -- no precondition : Should work on any formula
 -- will take a formula, apply arrowfree, nnf and cnf in this order to the formula and return the result
 -- to be honest, i have no idea if this works correctly or not
