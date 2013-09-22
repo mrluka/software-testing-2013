@@ -81,7 +81,7 @@ atests3 x y z = atest3 x y &&
 		atest3 y x && 
 		atest3 z x && 
 		atest3 z y
-		
+-- run 4th property test in every possible combination for the three given lists
 atests4 :: Eq a => Ord a => [a] -> [a] -> [a] -> Bool
 atests4 x y z = atest4 x y && 
 		atest4 x z && 
@@ -89,7 +89,7 @@ atests4 x y z = atest4 x y &&
 		atest4 y x && 
 		atest4 z x && 
 		atest4 z y
-		
+-- run 5th property test in every possible combination for the three given lists		
 atests5 :: Eq a => Ord a => [a] -> [a] -> [a] -> Bool
 atests5 x y z = atest5 x y && 
 		atest5 x z && 
@@ -97,10 +97,11 @@ atests5 x y z = atest5 x y &&
 		atest5 y x && 
 		atest5 z x && 
 		atest4 z y 
-
+-- assure that every one of the three generated sets is a permutation of itself
 atests6 x y z =  isPermutation x x &&
 		 isPermutation y y &&
 		 isPermutation z z
+		 
 -- Testable Properties
 
 -- testable property #1 : lists must have same lengths
@@ -148,8 +149,6 @@ countElements :: Eq a => [a] -> Int
 countElements [] = 0
 countElements (x:xs) = 1 + countElements xs
 
-
- 
 -- second: testing with randomly generated lists
 -- make 1.000.000.000 runs to find some permutations takes too long, 10000 is feasible
 runPermTests = runPermTestsR 10000
