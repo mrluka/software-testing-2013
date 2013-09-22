@@ -1,5 +1,42 @@
 module TestPermutationsCK where
 import PermutationLH
+import GenIntListCK
+
+runPermTests = runPermTestsR 1
+
+runPermTestsR :: Int -> IO Bool
+runPermTestsR x = if x > 0 then runPermTestsRHelper (x -1)  else return True
+
+runPermTestsRHelper :: Int -> IO Bool
+runPermTestsRHelper n = do res1 <- testRandomPermutations
+                           res2 <- runPermTestsR n
+                           return (res1 && res2)
+
+
+-- runPermTestsRHelper a b = True
+
+
+--testRandomPermutations = atests genIntList genIntList genIntList
+
+testRandomPermutations :: IO Bool
+testRandomPermutations = do list1 <-  genIntList 
+                            list2 <-  genIntList 
+                            list3 <-  genIntList 
+                            return (atests list1 list2 list3) --list1 list2 list3  let testResult =
+                        --    if testResult
+                          --    then return True
+                            --  else return False
+                            --checkTestResult testResult
+--                                              return ()
+
+--checkTestResult :: Bool -> IO()
+--checkTestResult a | a == True = putStrLn "a"
+--                    | otherwise = putStrLn "b"
+
+--testRandomPermutations | atests genIntList genIntList genIntList == True = print "yes"
+--                       | otherwise = print "no"
+
+-- ---- ---- ---- ---- ----
 p1 = [0,0,2]
 p2 = [0,2,0]
 p3 = [2,0,0]
@@ -7,6 +44,7 @@ p3 = [2,0,0]
 np1 = [2,2,0]
 np2 = [0,2]
 np3 = [2,2,2,3]
+
 
 -- first: testing with manual written lists in manual assigned combinations
 testPermutations :: Bool
@@ -50,6 +88,7 @@ atests z x y = 	atests1 x y z &&
 		atests2 x y z &&
 		atests3 x y z &&
 		atests4 x y z
+
 -- run 1st property test in every possible combination for the three given lists
 atests1 :: Eq a => Ord a => [a] -> [a] -> [a] -> Bool
 atests1 x y z = atest1 x y && 
