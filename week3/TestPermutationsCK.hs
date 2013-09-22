@@ -1,41 +1,7 @@
 module TestPermutationsCK where
 import PermutationLH
-import GenIntListCK
-
-runPermTests = runPermTestsR 1
-
-runPermTestsR :: Int -> IO Bool
-runPermTestsR x = if x > 0 then runPermTestsRHelper (x -1)  else return True
-
-runPermTestsRHelper :: Int -> IO Bool
-runPermTestsRHelper n = do res1 <- testRandomPermutations
-                           res2 <- runPermTestsR n
-                           return (res1 && res2)
-
-
--- runPermTestsRHelper a b = True
-
-
---testRandomPermutations = atests genIntList genIntList genIntList
-
-testRandomPermutations :: IO Bool
-testRandomPermutations = do list1 <-  genIntList 
-                            list2 <-  genIntList 
-                            list3 <-  genIntList 
-                            return (atests list1 list2 list3) --list1 list2 list3  let testResult =
-                        --    if testResult
-                          --    then return True
-                            --  else return False
-                            --checkTestResult testResult
---                                              return ()
-
---checkTestResult :: Bool -> IO()
---checkTestResult a | a == True = putStrLn "a"
---                    | otherwise = putStrLn "b"
-
---testRandomPermutations | atests genIntList genIntList genIntList == True = print "yes"
---                       | otherwise = print "no"
-
+import GenIntListLH
+                        
 -- ---- ---- ---- ---- ----
 p1 = [0,0,2]
 p2 = [0,2,0]
@@ -48,7 +14,7 @@ np3 = [2,2,2,3]
 
 -- first: testing with manual written lists in manual assigned combinations
 testPermutations :: Bool
-testPermutations = test1 && test2 && test3
+testPermutations = test1 && test2 && test3 && runPermTests
 
 -- manually test positive cases with predefined arrays
 test1 :: Bool
@@ -170,5 +136,19 @@ countElements (x:xs) = 1 + countElements xs
 
  
 -- second: testing with randomly generated lists
+-- make 1.000.000.000 runs to find some permutations
+runPermTests = runPermTestsR 1000000000
 
--- @todo implementing:  generate a large number of lists (so we have some permutations amongst them) and run tests
+runPermTestsR :: Int -> IO Bool
+runPermTestsR x = if x > 0 then runPermTestsRHelper (x -1)  else return True
+
+runPermTestsRHelper :: Int -> IO Bool
+runPermTestsRHelper n = do res1 <- testRandomPermutations
+                           res2 <- runPermTestsR n 
+                           return (res1 && res2)
+
+testRandomPermutations :: IO Bool
+testRandomPermutations = do list1 <-  genIntList; 
+                            list2 <-  genIntList;
+                            list3 <-  genIntList; 
+                            return (atests list1 list2 list3) --list1 list2 list3  let testResult =
