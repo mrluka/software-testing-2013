@@ -14,7 +14,7 @@ np3 = [2,2,2,3]
 
 -- first: testing with manual written lists in manual assigned combinations
 testPermutations :: Bool
-testPermutations = test1 && test2 && test3 && runPermTests
+testPermutations = test1 && test2 && test3
 
 -- manually test positive cases with predefined arrays
 test1 :: Bool
