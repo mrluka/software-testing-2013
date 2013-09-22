@@ -1,4 +1,4 @@
-module Permutation where
+module PermutationLH where
 
 -- > --------- Ex 4
 -- Write a function that returns True if its arguments are permutations of each other.  

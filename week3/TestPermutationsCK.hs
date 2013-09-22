@@ -1,5 +1,5 @@
-module TestPerm where
-import Permutation
+module TestPermutationsCK where
+import PermutationLH
 p1 = [0,0,2]
 p2 = [0,2,0]
 p3 = [2,0,0]
