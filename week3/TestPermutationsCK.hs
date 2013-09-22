@@ -106,7 +106,10 @@ atests6 x y z =  isPermutation x x &&
 -- assure that every one of the three generated sets is not a permutation with an empty list
 atests7 x y z = (isPermutation x [] == False) &&
 		(isPermutation y []  == False) &&
-		(isPermutation z []  == False) 
+		(isPermutation z []  == False) &&
+		(isPermutation [] x == False) &&
+		(isPermutation [] y == False) &&
+		(isPermutation [] z == False)
 		 
 -- Testable Properties
 
