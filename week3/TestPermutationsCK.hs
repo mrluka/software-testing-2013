@@ -1,5 +1,5 @@
 module TestPermutationsCK where
-import PermutationLH
+import PermutationCK
 import GenIntListLH
                         
 -- ---- ---- ---- ---- ----
@@ -53,7 +53,9 @@ atests :: Eq a => Ord a=> [a] -> [a] -> [a] -> Bool
 atests z x y = 	atests1 x y z &&
 		atests2 x y z &&
 		atests3 x y z &&
-		atests4 x y z
+		atests4 x y z &&
+		atests5 x y z &&
+		atests6 x y z
 
 -- run 1st property test in every possible combination for the three given lists
 atests1 :: Eq a => Ord a => [a] -> [a] -> [a] -> Bool
@@ -87,6 +89,18 @@ atests4 x y z = atest4 x y &&
 		atest4 y x && 
 		atest4 z x && 
 		atest4 z y
+		
+atests5 :: Eq a => Ord a => [a] -> [a] -> [a] -> Bool
+atests5 x y z = atest5 x y && 
+		atest5 x z && 
+		atest5 y z &&
+		atest5 y x && 
+		atest5 z x && 
+		atest4 z y 
+
+atests6 x y z =  isPermutation x x &&
+		 isPermutation y y &&
+		 isPermutation z z
 -- Testable Properties
 
 -- testable property #1 : lists must have same lengths
@@ -110,9 +124,6 @@ atest3 p q = 	if isPermutation p q
 
 -- testable property #4 : if a and b are permutations then every element that exists in a must also exist in b and vice versa
 atest4 :: Eq a => Ord a => [a] -> [a] -> Bool
-atest4 [] [] = True
-atest4 x [] = False
-atest4 [] y = False
 atest4 x y = if isPermutation x y
 		  then atest4a x y && atest4a y x
 		  else True
@@ -122,6 +133,10 @@ atest4a [] [] = True
 atest4a [] (y:ys) = True
 atest4a (x:xs) [] = False
 atest4a (x:xs) (y:ys) = existsIn x (y:ys) && atest4a xs (y:ys)
+
+-- testable property #5 : if a == b then a must be a permutation of b
+atest5 :: Eq a => Ord a => [a] -> [a] -> Bool
+atest5 x y = if x == y then isPermutation x y else True
 
 -- Helper function to check if an element exists in an array
 existsIn :: Eq a => a -> [a] -> Bool
@@ -136,8 +151,8 @@ countElements (x:xs) = 1 + countElements xs
 
  
 -- second: testing with randomly generated lists
--- make 1.000.000.000 runs to find some permutations
-runPermTests = runPermTestsR 1000000000
+-- make 1.000.000.000 runs to find some permutations takes too long, 10000 is feasible
+runPermTests = runPermTestsR 10000
 
 runPermTestsR :: Int -> IO Bool
 runPermTestsR x = if x > 0 then runPermTestsRHelper (x -1)  else return True
