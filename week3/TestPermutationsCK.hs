@@ -55,7 +55,8 @@ atests z x y = 	atests1 x y z &&
 		atests3 x y z &&
 		atests4 x y z &&
 		atests5 x y z &&
-		atests6 x y z
+		atests6 x y z &&
+                atests7 x y z
 
 -- run 1st property test in every possible combination for the three given lists
 atests1 :: Eq a => Ord a => [a] -> [a] -> [a] -> Bool
@@ -101,6 +102,11 @@ atests5 x y z = atest5 x y &&
 atests6 x y z =  isPermutation x x &&
 		 isPermutation y y &&
 		 isPermutation z z
+
+-- assure that every one of the three generated sets is not a permutation with an empty list
+atests7 x y z = (isPermutation x [] == False) &&
+		(isPermutation y []  == False) &&
+		(isPermutation z []  == False) 
 		 
 -- Testable Properties
 
