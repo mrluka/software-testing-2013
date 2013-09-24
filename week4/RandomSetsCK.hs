@@ -13,10 +13,10 @@ import Techniques
 
 randomS:: IO (Set Int)
 randomS = do randomCount <- getRandomInt 10
-             (randomSet randomCount)
+             randomSet randomCount
 
 randomSet :: Int -> IO (Set Int)
-randomSet 0 = return (emptySet)
+randomSet 0 = return emptySet
 randomSet c = do randomElement <- getRandomInt 10
-                 set <- (randomSet (c-1))
+                 set <- randomSet (c-1)
                  return (insertSet randomElement set)

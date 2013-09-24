@@ -24,7 +24,7 @@ union x y = unionR y (unionR x emptySet)
 
 unionR :: Ord a => Set a -> Set a -> Set a
 unionR (Set []) z = z
-unionR (Set (x:xs)) z = if (inSet x z) 
+unionR (Set (x:xs)) z = if inSet x z
 			 then unionR (Set xs) z 
 			 else unionR (Set xs) (insertSet x z)
 
@@ -34,7 +34,7 @@ difference x y = differenceR x y (differenceR y x emptySet)
 differenceR :: Ord a=> Set a -> Set a -> Set a -> Set a
 differenceR (Set []) y z = z
 differenceR x (Set []) z = z
-differenceR (Set (x:xs)) y z = if (inSet x y)
+differenceR (Set (x:xs)) y z = if inSet x y
 			      then differenceR (Set xs) y z 
 			      else differenceR (Set xs) y (insertSet x z)
 

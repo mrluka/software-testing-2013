@@ -34,7 +34,7 @@ rClos :: Ord a => Rel a -> Rel a
 rClos x = setToRel ( rClos1 ( relToSet x ) )
 
 rClos1 :: Ord a => Set (a,a) -> Set (a,a)
-rClos1 x = SetOperationsCK.union (x) (rClos2 x emptySet)
+rClos1 x = x `SetOperationsCK.union` rClos2 x emptySet
 
 rClos2 :: Ord a => Set(a,a) -> Set(a,a) -> Set(a,a)
 rClos2 (Set []) y = y
@@ -46,33 +46,33 @@ rClos3 (Set (x:xs)) current z = rClos4 current (getAllSuccessors (Set (x:xs)) (g
 rClos4 current (Set []) z = z
 rClos4 current (Set (y:ys)) z = rClos4 current (Set ys) (rClos5 current y z)
 
-rClos5 current y z =  if inSet ((getFirst current),y) z
+rClos5 current y z =  if inSet (getFirst current,y) z
 				      then z 
-				      else insertSet ((getFirst current),y) z
+				      else insertSet (getFirst current,y) z
 
-suc = getSuccessors (relToSet(s1)) 1
+suc = getSuccessors (relToSet s1) 1
 -- returns the direct successors
-getSuccessors :: Ord a => Set (a,a) -> a -> Set (a)
+getSuccessors :: Ord a => Set (a,a) -> a -> Set a
 getSuccessors x lookup = getSuccessorsR x lookup emptySet
   
-getSuccessorsR :: Ord a => Set (a,a) -> a -> Set (a) -> Set (a)
+getSuccessorsR :: Ord a => Set (a,a) -> a -> Set a -> Set a
 getSuccessorsR (Set []) lookup z = z
-getSuccessorsR (Set (x:xs)) lookup z = if ((getFirst x) == lookup) 
+getSuccessorsR (Set (x:xs)) lookup z = if getFirst x == lookup 
 					  then getSuccessorsR2 (Set (x:xs)) lookup z
 					  else getSuccessorsR (Set xs) lookup z
-getSuccessorsR2 (Set (x:xs)) lookup z= if (inSet (getSecond x) z) 
+getSuccessorsR2 (Set (x:xs)) lookup z= if inSet (getSecond x) z
 					then getSuccessorsR (Set xs) lookup z 
 					else getSuccessorsR (Set xs) lookup (insertSet (getSecond x) z)
 					
 -- returns all recursive successors (successor of successor of ... ) 
-getAllSuccessors :: Ord a => Set(a,a) -> a -> Set(a)
+getAllSuccessors :: Ord a => Set(a,a) -> a -> Set a
 getAllSuccessors x lookup = getAllSuccessorsR x lookup emptySet
 
-getAllSuccessorsR :: Ord a => Set(a,a) -> a -> Set(a) -> Set(a)
+getAllSuccessorsR :: Ord a => Set(a,a) -> a -> Set a -> Set a
 getAllSuccessorsR (Set[]) lookup z = z 
 getAllSuccessorsR (Set (x:xs)) lookup z = getSubSuccessors (Set (x:xs)) (getSuccessors (Set (x:xs)) lookup) z
 
-getSubSuccessors :: Ord a => Set(a,a) -> Set(a) -> Set(a) -> Set(a)
+getSubSuccessors :: Ord a => Set(a,a) -> Set a -> Set a -> Set a
 getSubSuccessors (Set []) (Set []) z = z
 getSubSuccessors (Set []) lookup z = z
 getSubSuccessors x (Set []) z = z
@@ -80,12 +80,12 @@ getSubSuccessors (Set (x:xs)) (Set (y:ys)) z = getSubSuccessors (Set (x:xs)) (Se
 
 
 --helper : transform set to relation
-setToRel :: Ord a => Set (a,a) -> Rel (a)
+setToRel :: Ord a => Set (a,a) -> Rel a
 setToRel x = setToRelR x []
 
-setToRelR :: Ord a => Set(a,a) -> Rel (a) -> Rel (a)
+setToRelR :: Ord a => Set(a,a) -> Rel a -> Rel a
 setToRelR (Set []) y = y
-setToRelR (Set (x:xs)) y = [x]	 ++ setToRel (Set xs)
+setToRelR (Set (x:xs)) y = x : setToRel (Set xs)
 
 -- helper : transform relation to set
 relToSet :: Ord a => Rel a -> Set (a,a)
@@ -111,15 +111,15 @@ getSecond (a,b) = b
 
 -- here i can reuse the functions above
 -- to prove that a relation is a transitive closure the output of getSuccessors and getAllSuccessors must be the same for each element in the relation
-isTransitiveClosure :: Ord a => Rel (a) -> Bool
+isTransitiveClosure :: Ord a => Rel a -> Bool
 isTransitiveClosure x = isTransitiveClosure2 (relToSet x)
 
 isTransitiveClosure2 :: Ord a => Set (a,a) -> Bool
 isTransitiveClosure2 (Set []) = True
-isTransitiveClosure2 (Set (x:xs)) = (isTransitiveIn x (Set (x:xs))) && (isTransitiveClosure2 (Set xs))
+isTransitiveClosure2 (Set (x:xs)) = isTransitiveIn x (Set (x:xs)) && isTransitiveClosure2 (Set xs)
 
 isTransitiveIn :: Ord a => (a,a) -> Set(a,a) -> Bool
 isTransitiveIn x (Set []) = True
 isTransitiveIn x (Set (y:ys)) = isEmpty(SetOperationsCK.difference (getAllSuccessors (Set (y:ys)) (getFirst x))  (getSuccessors (Set (y:ys)) (getFirst x)))
 
-manualTest = (not (isTransitiveClosure (s1))) &&  isTransitiveClosure (rClos s1)
+manualTest = not (isTransitiveClosure s1) &&  isTransitiveClosure (rClos s1)
