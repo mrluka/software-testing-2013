@@ -1,0 +1,25 @@
+module SetOperationsCK where
+
+import SetOrd
+
+-- 
+-- Task 3 : Implement operations for set intersection, set union and set difference
+-- Next, use automated random testing to check that your implementation is correct.
+--
+
+-- @todo implementation
+intersection :: Ord a => Set a -> Set a -> Set a
+intersection x y = y
+
+-- @todo implementation
+union :: Ord a => Set a -> Set a -> Set a
+union x y = y
+
+-- @todo implementation
+difference :: Ord a => Set a -> Set a -> Set a
+difference x y = y
+
+-- @todo automated testing
+testOperations :: Bool
+testOperations = testIntersection && testUnion && testDifference
+
