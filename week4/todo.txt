@@ -1,0 +1,5 @@
+Task 1 : List with specific points that cause difficulty
+Task 2 : indication of time spent (?h LH)
+Task 3 : done
+Task 4 : indication of time spent (6h CK)
+Task 5 : automated (random) testing, test report, indication of time spent (2h CK)
