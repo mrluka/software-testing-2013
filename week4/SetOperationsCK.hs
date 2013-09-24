@@ -2,6 +2,7 @@ module SetOperationsCK where
 
 import SetOrd
 import RandomSetsCK
+
 -- 
 -- Task 3 : Implement operations for set intersection, set union and set difference
 -- Next, use automated random testing to check that your implementation is correct.
@@ -9,15 +10,13 @@ import RandomSetsCK
 
 
 intersection :: Ord a => Set a -> Set a -> Set a
-intersection x y = doIntersection x y emptySet
+intersection x y = intersectionR x y emptySet
 
-doIntersection :: Ord a => Set a -> Set a -> Set a -> Set a
-doIntersection (Set []) (Set []) z = z
-doIntersection x (Set []) z = z
-doIntersection (Set []) y z = z
-doIntersection (Set (x:xs)) (Set(y:ys)) z =  if inSet x (Set (y:ys)) 
-					      then doIntersection (Set xs) (Set (y:ys)) (insertSet x z) 
-					      else doIntersection (Set xs) (Set (y:ys)) z
+intersectionR :: Ord a => Set a -> Set a -> Set a -> Set a
+intersectionR (Set []) y z = z
+intersectionR (Set (x:xs))y z =  if inSet x y 
+				  then intersectionR (Set xs) y (insertSet x z) 
+				  else intersectionR (Set xs) y z
 
 union :: Ord a => Set a -> Set a -> Set a
 union x y = unionR y (unionR x emptySet)
@@ -33,8 +32,7 @@ difference x y = differenceR x y (differenceR y x emptySet)
 
 differenceR :: Ord a=> Set a -> Set a -> Set a -> Set a
 differenceR (Set []) y z = z
-differenceR x (Set []) z = z
 differenceR (Set (x:xs)) y z = if inSet x y
-			      then differenceR (Set xs) y z 
-			      else differenceR (Set xs) y (insertSet x z)
+				then differenceR (Set xs) y z 
+				else differenceR (Set xs) y (insertSet x z)
 
