@@ -109,17 +109,32 @@ getSecond (a,b) = b
 -- test method for this. Try to use random test generation. Define reasonable properties to test
 --
 
--- here i can reuse the functions above
--- to prove that a relation is a transitive closure the output of getSuccessors and getAllSuccessors must be the same for each element in the relation
+-- here i can reuse the functions above:
+-- to prove that a relation is a transitive closure,
+-- the output of getSuccessors and getAllSuccessors 
+-- must be the same for each element in the relation
+--
 isTransitiveClosure :: Ord a => Rel a -> Bool
-isTransitiveClosure x = isTransitiveClosure2 (relToSet x)
+isTransitiveClosure x = isTransitiveClosureR (relToSet x)
 
-isTransitiveClosure2 :: Ord a => Set (a,a) -> Bool
-isTransitiveClosure2 (Set []) = True
-isTransitiveClosure2 (Set (x:xs)) = isTransitiveIn x (Set (x:xs)) && isTransitiveClosure2 (Set xs)
+isTransitiveClosureR :: Ord a => Set (a,a) -> Bool
+isTransitiveClosureR (Set []) = True
+isTransitiveClosureR (Set (x:xs)) = isTransitiveIn x (Set (x:xs)) && isTransitiveClosureR (Set xs)
 
 isTransitiveIn :: Ord a => (a,a) -> Set(a,a) -> Bool
 isTransitiveIn x (Set []) = True
 isTransitiveIn x (Set (y:ys)) = isEmpty(SetOperationsCK.difference (getAllSuccessors (Set (y:ys)) (getFirst x))  (getSuccessors (Set (y:ys)) (getFirst x)))
 
 manualTest = not (isTransitiveClosure s1) &&  isTransitiveClosure (rClos s1)
+
+autoTest :: Bool
+autoTest = autoTestR 1000
+
+autoTestR x = if x > 0 then autoTestR (x -1) && autoTestR2 getRandomRelation else True
+
+-- @todo replace with real randomizer
+getRandomRelation :: Ord a => Num a=> Rel a
+getRandomRelation = setToRel (insertSet (1,2) ( insertSet (2,3) (insertSet (3,4) emptySet)))
+
+autoTestR2 :: Ord a => Rel a -> Bool
+autoTestR2 x = isTransitiveClosure x || isTransitiveClosure (rClos x)
