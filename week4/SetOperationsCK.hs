@@ -1,7 +1,7 @@
 module SetOperationsCK where
 
 import SetOrd
-
+import RandomSetsCK
 -- 
 -- Task 3 : Implement operations for set intersection, set union and set difference
 -- Next, use automated random testing to check that your implementation is correct.
@@ -38,31 +38,3 @@ differenceR (Set (x:xs)) y z = if (inSet x y)
 			      then differenceR (Set xs) y z 
 			      else differenceR (Set xs) y (insertSet x z)
 
-testOperations :: Bool
-testOperations = testIntersection && testUnion && testDifference
-
--- @todo implementation with automated random values
-t1 = insertSet 10 (insertSet 8 (insertSet 6 emptySet))
-t2 = insertSet 11 (insertSet 9 (insertSet 6 emptySet))
-t3 = insertSet 11 (insertSet 9 (insertSet 7 emptySet))
-
-testIntersection :: Bool
-testIntersection = (isEmpty (intersection t1 t3) == True) 
-  && (isEmpty (intersection t1 t2) == False) 
-  && (inSet 6 (intersection t1 t2) == True) 
-  && (inSet 6 (intersection t1 t3) == False) 
-  && (inSet 11 (intersection t1 t3) == False)
-  
--- @todo implementation with automated random values
-testUnion :: Bool
-testUnion = ((isEmpty (union t1 t2)) == False) && 
-	    ((inSet 10 (union t1 t2)) == True) && 
-	    ((inSet 11 (union t1 t2)) == True) &&
-	    ((inSet 12 (union t1 t2)) == False)
-
--- @todo implementation with automated random values
-testDifference :: Bool
-testDifference = ((isEmpty (difference t1 t1)) == True) &&
-		  ((isEmpty (difference t1 t2)) == False) && 
-		  ((inSet 10 (difference t1 t2)) == True) &&
-		  ((inSet 6 (difference t1 t2)) == False)
