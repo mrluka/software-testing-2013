@@ -4,7 +4,7 @@ import SetOrd
 import Data.List
 import SetOperationsCK
 --
--- Task 4:
+-- Task 4: (time spent: 6h)
 -- Suppose we implement binary relations as list of pairs, Haskell type [(a,a)].
 -- Assume the following defnitions:
 -- 
