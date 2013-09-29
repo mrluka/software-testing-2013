@@ -69,21 +69,19 @@ simpleAutoTest = autoTest 100
 autoTest :: Int ->IO Bool
 autoTest testCount  = if testCount > 0 
 		       then do 
-				randRel <- getRandomRelation 2  -- relation pair count
-				let tr = trClos randRel
+				randRel <- getRandomRelation 4  -- relation pair count
 				testRes <-  autoTest (testCount -1)
-				testResR <- autoTestR tr
+				testResR <- autoTestR randRel
 				return (testRes && testResR)
                       else return True
 
--- 2 different proofs for transitivity 
 autoTestR :: Rel Int -> IO Bool
-autoTestR x = return  ((isTrans x) || (isTrans (trClos x)))
+autoTestR x = return  ((length x == length (trClos x)) || (isTrans (trClos x)))
 
 getRandomRelation ::  Int -> IO (Rel Int) 
 getRandomRelation  0 = return []
-getRandomRelation  n = do fstX <- getRandomInt 3 -- x range
-			  fstY <- getRandomInt 3 -- y range				
+getRandomRelation  n = do fstX <- getRandomInt 9 -- x range
+			  fstY <- getRandomInt 9 -- y range				
 			  randPairs <- getRandomRelation (n-1) 			
 			  return ((fstX, fstY) : randPairs)
 
