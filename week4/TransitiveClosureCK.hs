@@ -170,13 +170,8 @@ getRandomRelation  n = do fstX <- getRandomInt 3 -- x range
 			  return ((fstX, fstY) : randPairs)
 
 -- -- -- -- Transitive check method #2 (From book page 175. transR)
--- @problem: this function depends on the order of elements:
--- *Sol4> isTrans [(1,2),(1,3),(2,3)]
--- True
--- *Sol4> isTrans [(1,2),(2,3),(1,3)]
--- False
--- @reason:Rel implementation in the (book) example is a Set of pairs, while our implementation is a list of pairs
--- 
+-- slightly transformed because different implementation of "Rel":
+-- the original function was dependent on the order of elements in the relation
 isTrans :: Ord a => Rel a -> Bool
 isTrans x = isTrans2 (relToSet x)
 
