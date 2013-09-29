@@ -50,8 +50,8 @@ autoTestsR :: Int -> IO Bool
 autoTestsR x = if x > 0
 		then 
 		doAutoTests x --(autoTestsR2) && (autoTestsR (x - 1)))	  
-		else 
-		getIOTrue
+		else return True 
+	--	getIOTrue
 		
 -- runner for the automatic tests (will call back to autoTestsR)
 
@@ -110,19 +110,5 @@ testDifferenceA2 :: Ord a => Set a -> Set a -> Set a -> Bool
 testDifferenceA2 x y (Set []) = True
 testDifferenceA2 x y (Set (z:zs))  = (inSet z x /= inSet z y) && testDifferenceA2 x y (Set zs)
 
-
---
--- Helpers
---
-		
--- dirty helper to have access to "True" in IO 
-
-getIOTrue :: IO Bool
-getIOTrue = do z <- randomS
-	       return (getTrue z)
-	       
--- dirty helper to have access to "True" in IO 
-
-getTrue x = True
 
 
