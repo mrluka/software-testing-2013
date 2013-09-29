@@ -30,9 +30,13 @@ s1 = [(1,2),(2,3),(3,4),(4,5)]
 s2 = [(3,1),(3,5),(5,9),(1,9)]
 s3 = [(1,2),(2,3)]
 
+
 -- @todo cleanup implementation
-trClos :: Ord a => Rel a -> Rel a
-trClos x = setToRel ( trClos1 ( relToSet x ) )
+trClos :: Ord a => Rel a -> Rel a 
+trClos x = generateTransClos x
+
+trClosOLD :: Ord a => Rel a -> Rel a
+trClosOLD x = setToRel ( trClos1 ( relToSet x ) )
 
 trClos1 :: Ord a => Set (a,a) -> Set (a,a)
 trClos1 x = x `SetOperationsCK.union` trClos2 x emptySet
@@ -71,13 +75,15 @@ getAllSuccessors x lookup = getAllSuccessorsR x lookup emptySet
 
 getAllSuccessorsR :: Ord a => Set(a,a) -> a -> Set a -> Set a
 getAllSuccessorsR (Set[]) lookup z = z 
-getAllSuccessorsR (Set (x:xs)) lookup z = getSubSuccessors (Set (x:xs)) (getSuccessors (Set (x:xs)) lookup) z
+getAllSuccessorsR (Set (x:xs)) lookup z = getSubSuccessors (Set (x:xs)) (getSuccessors (Set (x:xs)) lookup) lookup z
 
-getSubSuccessors :: Ord a => Set(a,a) -> Set a -> Set a -> Set a
-getSubSuccessors (Set []) (Set []) z = z
-getSubSuccessors (Set []) lookup z = z
-getSubSuccessors x (Set []) z = z
-getSubSuccessors (Set (x:xs)) (Set (y:ys)) z = getSubSuccessors (Set (x:xs)) (Set ys) (insertSet y (getAllSuccessorsR (Set (x:xs)) y z))	   
+getSubSuccessors :: Ord a => Set(a,a) -> Set a -> a -> Set a -> Set a
+getSubSuccessors (Set []) (Set []) lookup z = z
+getSubSuccessors (Set []) y lookup z = z
+getSubSuccessors x (Set []) lookup z = z
+getSubSuccessors (Set (x:xs)) (Set (y:ys)) lookup z = if y /= lookup && not (inSet y z) && not (inSet lookup z)
+							 then (insertSet y (getAllSuccessorsR (Set (x:xs)) y z)) 
+	else emptySet
 
 
 --helper : transform set to relation
@@ -127,7 +133,7 @@ getSecond (a,b) = b
 --2) Use different algorithms, like in the following part.
 
 -----manual
-manualTest = (not (isTrans s1) &&  isTrans (trClos s1)) && not (isTransitiveClosure s1) &&  isTransitiveClosure (trClos s1)
+manualTest = (not (isTrans s1) &&  isTrans (trClos s1))
 
 
 -----automatic
@@ -151,9 +157,8 @@ autoTest testCount  = if testCount > 0 then do
 
 -- 2 different proofs for transitivity 
 autoTestR :: Rel Int -> IO Bool
-autoTestR x = return ((isTransitiveClosure x || isTransitiveClosure (trClos x)) || ((isTrans x) || (isTrans (trClos x))))
---autoTestR2 x = return (isTransitiveClosure x || isTransitiveClosure (trClos x)) -- method #1
---autoTestR2 x = return ((isTrans x) || (isTrans (trClos x))) -- method #2
+autoTestR x = return ( ( (isTrans x) || (isTrans (trClos x)) ) )
+
 
 
 
@@ -164,33 +169,23 @@ getRandomRelation  n = do fstX <- getRandomInt 3 -- x range
 			  randPairs <- getRandomRelation (n-1) 			
 			  return ((fstX, fstY) : randPairs)
 
-
-
--- -- -- -- Transitive check method #1
--- here i can reuse the functions above:
--- to prove that a relation is a transitive closure,
--- the output of getSuccessors and getAllSuccessors 
--- must be the same for each element in the relation
-
-isTransitiveClosure :: Ord a => Rel a -> Bool
-isTransitiveClosure x = isTransitiveClosureR (relToSet x)
- 
-isTransitiveClosureR :: Ord a => Set (a,a) -> Bool
-isTransitiveClosureR (Set []) = True
-isTransitiveClosureR (Set (x:xs)) = isTransitiveIn x (Set (x:xs)) && isTransitiveClosureR (Set xs)
-
-isTransitiveIn :: Ord a => (a,a) -> Set(a,a) -> Bool
-isTransitiveIn x (Set []) = True
-isTransitiveIn x (Set (y:ys)) = isEmpty(SetOperationsCK.difference (getAllSuccessors (Set (y:ys)) (getFirst x))  (getSuccessors (Set (y:ys)) (getFirst x)))
-
-
-
 -- -- -- -- Transitive check method #2 (From book page 175. transR)
+-- @problem: this function depends on the order of elements:
+-- *Sol4> isTrans [(1,2),(1,3),(2,3)]
+-- True
+-- *Sol4> isTrans [(1,2),(2,3),(1,3)]
+-- False
+-- @reason:Rel implementation in the (book) example is a Set of pairs, while our implementation is a list of pairs
+-- 
 isTrans :: Ord a => Rel a -> Bool
-isTrans [] = True
-isTrans ( s) = and [trans pair (Set s) | pair <- s] where       
+isTrans x = isTrans2 (relToSet x)
+
+isTrans2 :: Ord a => Set (a,a) -> Bool
+isTrans2 (Set []) = True
+isTrans2 (Set s) = and [trans pair (Set s) | pair <- s] where       
                trans (x,y) (Set r) = and [inSet (x,v) (Set r) | (u,v) <- r, u ==y]
 
+               -- this looks pretty right, isnt it?
 generateTransClos ::Ord a => Rel a -> Rel a
 generateTransClos rel = do trans1 <- return (nub(rel ++ (rel @@ rel))) 
                            if ((length trans1) ==(length rel))
@@ -202,7 +197,7 @@ generateTransClos rel = do trans1 <- return (nub(rel ++ (rel @@ rel)))
 
 testT :: IO Bool
 testT = do randClo <- generateRandomTransClosures
-           let isT = (isTransitiveClosure randClo)
+           let isT = (isTrans randClo)
            return isT
 
 generateRandomTransClosures :: IO (Rel Int)
@@ -233,3 +228,8 @@ xnGenRandRelations r p  = do randRel <- nGenRandRel r p
 -- newtype Set a = Set [a] deriving (Eq,Ord)
 -- type Rel a = [(a,a)]
 -- (@@) :: Eq a => Rel a -> Rel a -> Rel a
+
+-----
+-- my implementation is buggy and runs into endless loops
+-- your implementation generateTransClos is the better way to do trClos
+-- then let's delete my implementation(s)
