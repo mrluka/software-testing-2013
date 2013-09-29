@@ -6,7 +6,7 @@ import SetOperations
 import Techniques
 
 --
--- Task 4: (time spent: 6h)
+-- Task 4: (time spent: 8h)
 -- Suppose we implement binary relations as list of pairs, Haskell type [(a,a)].
 -- Assume the following defnitions:
 -- 
@@ -54,7 +54,7 @@ relToSetR (x:xs) y = relToSetR xs (insertSet x y)
 
 
 -- > ---- Task 5:
-
+-- time spent 6h (plus 2h Task 2)
 -- Test the function trClos from the previous exercise. Devise your own 
 -- test method for this. Try to use random test generation. Define reasonable properties to test
 
