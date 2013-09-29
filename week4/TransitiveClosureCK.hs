@@ -187,6 +187,49 @@ isTransitiveIn x (Set (y:ys)) = isEmpty(SetOperationsCK.difference (getAllSucces
 
 -- -- -- -- Transitive check method #2 (From book page 175. transR)
 isTrans :: Ord a => Rel a -> Bool
-isTrans ([]) = True
+isTrans [] = True
 isTrans ( s) = and [trans pair (Set s) | pair <- s] where       
                trans (x,y) (Set r) = and [inSet (x,v) (Set r) | (u,v) <- r, u ==y]
+
+generateTransClos ::Ord a => Rel a -> Rel a
+generateTransClos rel = do trans1 <- return (nub(rel ++ (rel @@ rel))) 
+                           if ((length trans1) ==(length rel))
+                               then rel
+                               else generateTransClos trans1
+
+--------------------------
+-- --- -- test
+
+testT :: IO Bool
+testT = do randClo <- generateRandomTransClosures
+           let isT = (isTransitiveClosure randClo)
+           return isT
+
+generateRandomTransClosures :: IO (Rel Int)
+generateRandomTransClosures = do randRel <- (nGenRandRel 3 2)
+                                 let transClo =  (generateTransClos randRel)
+                                 print transClo
+                                 return transClo
+
+
+nGenRandRel :: Int ->  Int -> IO (Rel Int) -- r = range; c = pairsCount
+nGenRandRel r 0 = return []
+nGenRandRel r c =  do randX <- getRandomInt r 
+                      randY <- getRandomInt r
+                      randRel <- (nGenRandRel r (c-1))
+                      let noDu=  nub ((randX,randY): randRel)
+                      return noDu
+
+
+
+
+
+xnGenRandRelations :: Int -> Int  -> IO (Rel Int)-- r = range; p = pairCount
+xnGenRandRelations r p  = do randRel <- nGenRandRel r p
+                             print ("" ++ show randRel)
+                             return randRel
+
+
+-- newtype Set a = Set [a] deriving (Eq,Ord)
+-- type Rel a = [(a,a)]
+-- (@@) :: Eq a => Rel a -> Rel a -> Rel a
