@@ -1,7 +1,7 @@
 module TestSetOperations where
 import SetOrd
-import RandomSetsCK
-import SetOperationsCK
+import RandomSets
+import SetOperations
 
 -- wrapper for manual test functions
 
