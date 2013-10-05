@@ -3,8 +3,8 @@ where
 import Data.List
 import Week5
 
-
--- Task 1 : The function merge from the course notes can be used as follows, 
+-- Task 1  (time spent: 2h)
+-- The function merge from the course notes can be used as follows, 
 -- to create a function for list sorting:
 
 mergeSrt :: Ord a => [a] -> [a]
@@ -15,7 +15,12 @@ mergeSrt (x:xs) = merge [x] (mergeSrt xs)
 -- Deliverables: Assertion, Haskell program that uses this assertion
 -- indication of time spent.
 
--- assertion 1 : input and output have the same size ?
+-- tested properties: 
+-- 1. input and output should have same length (save duplicates)
+-- 2. either the input is already sorted, or the output will be
+
+mergeSrtA :: Ord a => [a] -> [a]
+mergeSrtA = assert1 (\ s i -> ((length s == length i) && (sorted s || sorted i))) mergeSrt
 
 -- Task 2  (time spent: 4h)
 -- Another approach to merge sort is to start by splitting the list to 
@@ -28,22 +33,22 @@ split xs = let
 	   in
 	    (take n xs, drop n xs)
 	    
-splitSort :: Ord a => [a] -> [a]
-splitSort x = if length x > 1 
-	      then splitSortR (split x) 
+splitSrt :: Ord a => [a] -> [a]
+splitSrt x = if length x > 1 
+	      then splitSrtR (split x) 
 	      else x
 
-splitSortR :: Ord a => ([a],[a]) -> [a]
-splitSortR (x,y) = merge (splitSort x) (splitSort y)
+splitSrtR :: Ord a => ([a],[a]) -> [a]
+splitSrtR (x,y) = merge (splitSrt x) (splitSrt y)
 
 -- Next, find a suitable assertion, and write an assertive version.
 
--- tested properties: 
+-- tested properties (same as in task 1)
 -- 1. input and output should have same length (save duplicates)
 -- 2. either the input is already sorted, or the output will be
 
-splitSortA :: Ord a => [a] -> [a]
-splitSortA = assert1 (\ s i -> ((length s == length i) && (sorted s || sorted i))) splitSort
+splitSrtA :: Ord a => [a] -> [a]
+splitSrtA = assert1 (\ s i -> ((length s == length i) && (sorted s || sorted i))) splitSrt
 -- 
 -- Deliverables: Haskell program, assertion, assertive version of Haskell program 
 -- that uses this assertion, indication of time spent.
