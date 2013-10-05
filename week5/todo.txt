@@ -1,0 +1,14 @@
+TODO
+
+task 1 : Assertion, Haskell program that uses this assertion, indication of time spent
+task 2 : Assertion, assertive version of Haskell program that uses this assertion, indication of time spent.
+task 3 : formal statement of new constraint, modifed Haskell program, sudoku solution for the above NRC-Handelsblad sudoku, indication of time spent.
+task 4 : NRC-Handelsblad sudoku generator, indication of time spent
+task 5 : testing code, test report, indication of time spent
+
+DONE
+task1 : 
+task2 : Haskell program
+task3 : 
+task4 :
+task5 :
