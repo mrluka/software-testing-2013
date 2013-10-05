@@ -17,7 +17,8 @@ mergeSrt (x:xs) = merge [x] (mergeSrt xs)
 
 -- assertion 1 : input and output have the same size ?
 
--- Task 2 : Another approach to merge sort is to start by splitting the list to 
+-- Task 2  (time spent: 4h)
+-- Another approach to merge sort is to start by splitting the list to 
 -- be sorted in equal parts, recursively sort the parts, next merge.
 -- Implement this, using the following split function.
 
@@ -34,13 +35,18 @@ splitSort x = if length x > 1
 
 splitSortR :: Ord a => ([a],[a]) -> [a]
 splitSortR (x,y) = merge (splitSort x) (splitSort y)
-	    
+
 -- Next, find a suitable assertion, and write an assertive version.
+
+-- tested properties: 
+-- 1. input and output should have same length (save duplicates)
+-- 2. either the input is already sorted, or the output will be
+
+splitSortA :: Ord a => [a] -> [a]
+splitSortA = assert1 (\ s i -> ((length s == length i) && (sorted s || sorted i))) splitSort
+-- 
 -- Deliverables: Haskell program, assertion, assertive version of Haskell program 
 -- that uses this assertion, indication of time spent.
-
--- possible assertion 1 : input and output have the same length ?
--- possible assertion 2 : output of splitSort is the same as output of mergeSort when given the same input ?
 
 
 -- Task 3 : The goal of this exercise is to extend the sudoku program from the 
@@ -69,5 +75,3 @@ splitSortR (x,y) = merge (splitSort x) (splitSort y)
 -- test process. One important property to test is whether the generated sudoku 
 -- problems are minimal. How can you test this?
 --Deliverables: testing code, test report, indication of time spent
-
-

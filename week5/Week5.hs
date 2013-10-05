@@ -21,7 +21,7 @@ decomp n = decomp' (0,n) where
 decompPost = post1 (\ (_,m) -> odd m) decomp
 
 assert1 :: (a -> b -> Bool) -> (a -> b) -> a -> b 
-assert1 p f x = if p x (f x) then f x 
+assert1 p f x = if p (x) (f x) then f (x) 
                 else error "assert1"
 
 decompA = assert1 (\ n (k,m) -> n == 2^k*m) decomp
