@@ -2,6 +2,7 @@ module Lab5
 where
 import Data.List
 import Week5
+import RandomSudoku
 
 -- Task 1  (time spent: 2h)
 -- The function merge from the course notes can be used as follows, 

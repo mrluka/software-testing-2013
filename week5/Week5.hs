@@ -210,6 +210,9 @@ values    = [1..9]
 blocks :: [[Int]]
 blocks = [[1..3],[4..6],[7..9]]
 
+nrcBlocks :: [[Int]]
+nrcBlocks = [[2..5],[6..8]]
+
 showDgt :: Value -> String
 showDgt 0 = " "
 showDgt d = show d
@@ -258,6 +261,12 @@ showSudoku = showGrid . sud2grid
 bl :: Int -> [Int]
 bl x = concat $ filter (elem x) blocks 
 
+nrcBl :: Int -> [Int]
+nrcBl x = concat $ filter (elem x) nrcBlocks
+
+nrcSubGrid :: Sudoku -> (Row, Column) -> [Value]
+nrcSubGrid s (r,c) =  [ s (r',c') | r' <- nrcBl r, c' <- nrcBl c ]
+
 subGrid :: Sudoku -> (Row,Column) -> [Value]
 subGrid s (r,c) = 
   [ s (r',c') | r' <- bl r, c' <- bl c ]
@@ -276,11 +285,15 @@ freeInColumn s c =
 freeInSubgrid :: Sudoku -> (Row,Column) -> [Value]
 freeInSubgrid s (r,c) = freeInSeq (subGrid s (r,c))
 
+freeInNrcSubgrid :: Sudoku -> (Row, Column) -> [Value]
+freeInNrcSubgrid s (r,c) = freeInSeq (nrcSubGrid s (r,c))
+
 freeAtPos :: Sudoku -> (Row,Column) -> [Value]
 freeAtPos s (r,c) = 
   (freeInRow s r) 
    `intersect` (freeInColumn s c) 
    `intersect` (freeInSubgrid s (r,c)) 
+   `intersect` (freeInNrcSubgrid s (r,c))
 
 injective :: Eq a => [a] -> Bool
 injective xs = nub xs == xs
@@ -297,6 +310,10 @@ subgridInjective :: Sudoku -> (Row,Column) -> Bool
 subgridInjective s (r,c) = injective vs where 
    vs = filter (/= 0) (subGrid s (r,c))
 
+nrcSubgridInjective :: Sudoku -> (Row, Column) -> Bool
+nrcSubgridInjective s (r,c) = injective vs where 
+   vs = filter (/= 0) (nrcSubGrid s (r,c))
+   
 consistent :: Sudoku -> Bool
 consistent s = and $
                [ rowInjective s r |  r <- positions ]
@@ -305,6 +322,9 @@ consistent s = and $
                 ++
                [ subgridInjective s (r,c) | 
                     r <- [1,4,7], c <- [1,4,7]]
+                ++ 
+               [ subgridInjective s(r,c) |
+		    r <- [2,6], c <- [2,6]]
 
 extend :: Sudoku -> (Row,Column,Value) -> Sudoku
 extend s (r,c,v) (i,j) | (i,j) == (r,c) = v
@@ -432,3 +452,36 @@ example5 = [[1,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,7,0,0],
             [0,0,0,0,0,0,0,8,0],
             [0,0,0,0,0,0,0,0,9]]
+            
+example6 :: Grid
+example6 = [[0,7,4,9,1,8,0,0,0],
+            [1,0,0,7,0,0,8,0,0],
+            [8,0,0,0,0,2,7,9,0],
+            [7,3,0,0,5,0,6,0,8],
+            [4,0,0,6,0,9,0,0,3],
+            [2,0,6,0,3,0,0,5,4],
+            [0,8,7,4,0,0,0,0,2],
+            [0,0,1,0,0,5,0,0,9],
+            [0,0,0,2,8,1,3,6,0]]
+            
+nrc :: Grid
+nrc = [[0,0,0,3,0,0,0,0,0],
+       [0,0,0,7,0,0,3,0,0],
+       [2,0,0,0,0,0,0,0,8],
+       [0,0,6,0,0,5,0,0,0],
+       [0,9,1,6,0,0,0,0,0],
+       [3,0,0,0,7,1,2,0,0],
+       [0,0,0,0,0,0,0,3,1],
+       [0,8,0,0,4,0,0,0,0],
+       [0,0,2,0,0,0,0,0,0]]
+       
+new_nrc :: Grid
+new_nrc = [[0,0,0,0,2,0,0,0,0],
+	   [0,0,0,0,0,0,0,0,0],
+	   [6,2,0,0,0,0,3,7,0],
+	   [0,0,0,0,0,1,0,5,9],
+	   [0,0,0,7,0,8,0,0,0],
+	   [0,0,4,0,0,0,0,0,0],
+	   [0,6,0,0,0,0,0,0,3],
+	   [0,0,0,0,0,2,1,0,0],
+	   [0,0,0,5,0,0,0,0,6]]
