@@ -55,7 +55,7 @@ doRandomTest = do
 		      == 
 		    toInteger((Lab6.exM (toInteger(x+1)) (toInteger(y+1)) (toInteger(z+1))))
 		   then return True
-		   else error ("exM gives not the same result as mod for "	 ++ (show (x+1)) ++ " , "  ++ (show (y+1)) ++ " ," ++ (show (z+1)))
+		   else error ("exM gives not the same result as expM for "	 ++ (show (x+1)) ++ " , "  ++ (show (y+1)) ++ " ," ++ (show (z+1)))
 
 {- 
 Task2 : 
