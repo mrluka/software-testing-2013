@@ -4,27 +4,83 @@ where
 import Data.List
 import System.Random
 import Week6
+import Techniques
+
+{-
+Time spent:
+task 1 & 2 : 7h CK (tests OK, implementation wrong)
+-}
 
 {- 
 Task 1 
-  Implement a function exM 
-  that does modular exponentiation of x^y in polynomial time, 
-  by repeatedly squaring modulo N.
+  Implement a function exM that does modular exponentiation of x^y 
+  in polynomial time, by repeatedly squaring modulo N.
   E.g., x^33 mod 5 can be computed by means of
   x^33 (mod 5) = x^32 (mod 5) * x (mod 5)
   x^32 (mod N) is computed in five steps by means of repeatedly squaring modulo N:
-  x (mod N) -> x^2   (mod N) -> x^4  (mod N) ! -> ...-> ! x^32 (mod N):
+  x (mod N) -> x^2 (mod N) -> x^4  (mod N) -> ...-> x^32 (mod N):
   If this explanation is too concise, look up relevant literature
 -}
 
+-- current solution: functional version of the algorithm found on wikipedia 
+-- http://en.wikipedia.org/wiki/Modular_exponentiation#Memory-efficient_method
+
 exM :: Integer -> Integer -> Integer -> Integer
-exM x y z = x
+exM base exponent modulus = exMR 0 1 base exponent modulus 
+
+exMR :: Integer -> Integer -> Integer -> Integer -> Integer -> Integer
+exMR i c base exponent modulus = if i < exponent
+				  then exMR (i + 1) (mod (c * base) modulus) base exponent modulus
+				  else c
+
+-- random tests to assure that our implementation comes up with the same result as the 'regular' mod operation
+
+-- perform 10000 random tests
+doRandomTests :: IO Bool
+doRandomTests = doRandomTestsR 10000
+
+-- perform a given number of random tests
+doRandomTestsR :: Integer-> IO Bool
+doRandomTestsR x = 
+		      if x > 0 
+		      then 
+		      do r <- doRandomTest
+		         p <- (doRandomTestsR (x - 1))
+		         return (p && r)
+		      else return True
+
+-- perform a single random test
+doRandomTest :: IO Bool
+doRandomTest = do 
+		   x <- (getRandomInt 1000)
+		   y <- (getRandomInt 1000) 
+		   z <- (getRandomInt 1000) 
+		   if 
+		    toInteger(expM (toInteger(x+1)) (toInteger(y+1)) (toInteger(z+1)))
+		      == 
+		    toInteger((Lab6.exM (toInteger(x+1)) (toInteger(y+1)) (toInteger(z+1))))
+		   then return True
+		   else error ("exM gives not the same result as mod for "	 ++ (show (x+1)) ++ " , "  ++ (show (y+1)) ++ " ," ++ (show (z+1)))
 
 {- 
 Task2 : 
   Check that your implementation is more efficient than expM by 
   running a number of relevant tests and documenting the results.
 -}
+
+{-
+Bad news! It's slower and less efficient! :(  
+
+*Lab6> expM 5 5000000 3			1	( 0.15 secs,   25264776 bytes)
+*Lab6> Lab6.exM 5 5000000 3		1	(11.54 secs, 2459061640 bytes)
+
+*Lab6> expM 537 5000000 319		199	( 0.74 secs,   99215856 bytes)
+*Lab6> Lab6.exM 537 5000000 319	199	(11.20 secs, 2458988504 bytes)
+
+*Lab6> expM 537 50000000 319		23	(9.50 secs, 1053698392 bytes)
+*Lab6> Lab6.exM 537 50000000 319	*** Exception: stack overflow
+-}
+
 
 {-
 Task 3 :
