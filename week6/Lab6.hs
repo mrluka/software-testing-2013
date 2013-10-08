@@ -6,11 +6,6 @@ import System.Random
 import Week6
 import Techniques
 
-{-
-Time spent:
-task 1 & 2 : 7h CK (tests OK, implementation wrong)
--}
-
 {- 
 Task 1 
   Implement a function exM that does modular exponentiation of x^y 
@@ -75,10 +70,10 @@ Bad news! It's slower and less efficient! :(
 *Lab6> Lab6.exM 5 5000000 3		1	(11.54 secs, 2459061640 bytes)
 
 *Lab6> expM 537 5000000 319		199	( 0.74 secs,   99215856 bytes)
-*Lab6> Lab6.exM 537 5000000 319	199	(11.20 secs, 2458988504 bytes)
+*Lab6> Lab6.exM 537 5000000 319 	199	(11.20 secs, 2458988504 bytes)
 
 *Lab6> expM 537 50000000 319		23	(9.50 secs, 1053698392 bytes)
-*Lab6> Lab6.exM 537 50000000 319	*** Exception: stack overflow
+*Lab6> Lab6.exM 537 50000000 319 	*** Exception: stack overflow
 -}
 
 
