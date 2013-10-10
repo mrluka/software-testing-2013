@@ -74,6 +74,18 @@ Bad news! It's slower and less efficient! :(
 
 *Lab6> expM 537 50000000 319		23	(9.50 secs, 1053698392 bytes)
 *Lab6> Lab6.exM 537 50000000 319 	*** Exception: stack overflow
+
+
+--------Luka
+*Lab6> expM 5 5000000 3			1	(0.44 secs, 25210884 bytes)
+*Lab6> Lab6.exM 5 5000000 3		1       (8.40 secs, 1167222876 bytes)
+
+*Lab6> expM 537 5000000 319		199	(2.23 secs, 100806448 bytes)
+*Lab6> Lab6.exM 537 5000000 319 	199	(8.32 secs, 1167228464 bytes)
+
+*Lab6> expM 537 50000000 319		23	(27.13 secs, 1055892216 bytes)
+*Lab6> Lab6.exM 537 50000000 319 	memory allocation failed (requested 2097152 bytes)
+
 -}
 
 
@@ -84,13 +96,18 @@ Task 3 :
   Primality Check correctly classify the primes as primes. Where the check can go
   wrong is on classifying composite numbers; these can slip through the Fermat test.
   Write a function composites :: [Integer] that generates the infinite list of composite 
-  natural numbers. Hint: modify Eratosthenes' sieve, so that instead of throwing away 
+  natural numbers. 
+  Hint: modify Eratosthenes' sieve, so that instead of throwing away 
   composite numbers, it marks them as false. Next filter out the numbers marked as false.
 -}
 
+composites :: [Integer]
+composites = []
+
+
 {-
 Task 4 :
-  Use the list of composite numbers to test Fermat's primality check. What is the
+  Use the list of composite numbers (composites :: [Integer]) to test Fermat's primality check. What is the
   least composite number that you can find that fools the check, for testF k with
   k = 1; 2; 3 ? What happens if you increase k?
 -}
