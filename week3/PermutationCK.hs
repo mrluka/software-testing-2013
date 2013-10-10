@@ -8,6 +8,8 @@ isPermutation :: Eq a => Ord a => [a] -> [a] -> Bool
 isPermutation x [] = False
 isPermutation [] y = False
 isPermutation x y = arrayEquals (srt x) (srt y)
+-- VVZ: very old school. How about this?
+-- VVZ: isPermutation x y = (sort x) == (sort y)
 
 arrayEquals :: Eq a => Ord a=> [a] -> [a] -> Bool
 arrayEquals [] [] = True
