@@ -46,7 +46,7 @@ doRandomTestsR x =
 
 -- perform a single random test
 doRandomTest :: IO Bool
-doRandomTest = do 
+doRandomTest = do  
 		   x <- (getRandomInt 1000)
 		   y <- (getRandomInt 1000) 
 		   z <- (getRandomInt 1000) 
@@ -99,9 +99,19 @@ Task 3 :
   natural numbers. 
   Hint: modify Eratosthenes' sieve, so that instead of throwing away 
   composite numbers, it marks them as false. Next filter out the numbers marked as false.
+
+Notes (Task 3 & Task 4)
+  Test Fermat’s Primality Check (primeF) 
+  Eratosthenes’ sieve is useless, it calculates primes as integers above 1 that are not multiples of primes
+  Modify Eratosthenes sieve so that it marks compound integers as false 
+  Fermat's Primality Check can go wrong 
+  Where the check can go wrong is on classifying composite numbers; these can slip through the Fermat test.
+  composites :: [Integer] should generate only prime nubers that are composite: integer above 1 that are (!) multiple of primes
+  Find integer produced by composites :: [Integer] that fails the primeF test
+
 -}
 
-composites :: [Integer]
+composites :: [Integer] -- list of prime integers above 1 that are (!) multiple of primes
 composites = []
 
 

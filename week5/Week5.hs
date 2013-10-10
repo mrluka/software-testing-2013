@@ -211,7 +211,7 @@ blocks :: [[Int]]
 blocks = [[1..3],[4..6],[7..9]]
 
 nrcBlocks :: [[Int]]
-nrcBlocks = [[2..5],[6..8]]
+nrcBlocks = [[2..5],[6..8]] -- Possible problem, better: [2..4] TODO
 
 showDgt :: Value -> String
 showDgt 0 = " "
