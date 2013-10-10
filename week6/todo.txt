@@ -1,7 +1,7 @@
 todo :
 
 Task 1 : implementation
-Task 2 : successful results
+Task 2 : successful results / compare & document results (with different solutions)
 Task 3 : everything
 Task 4 : everything
 Task 5 : everything

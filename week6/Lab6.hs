@@ -17,16 +17,33 @@ Task 1
   If this explanation is too concise, look up relevant literature
 -}
 
--- current solution: functional version of the algorithm found on wikipedia 
--- http://en.wikipedia.org/wiki/Modular_exponentiation#Memory-efficient_method
+-- SOLUTION 1 (Source Week6.hs)
+exM' :: Integer -> Integer -> Integer -> Integer
+exM' _ 0 _ = 1
+exM' x y n = let 
+             z = exM' x (y `div` 2) n
+             w = multM z z n
+               in 
+               if even y then w
+               else multM x w n 
 
-exM :: Integer -> Integer -> Integer -> Integer
-exM base exponent modulus = exMR 0 1 base exponent modulus 
 
-exMR :: Integer -> Integer -> Integer -> Integer -> Integer -> Integer
-exMR i c base exponent modulus = if i < exponent
-				  then exMR (i + 1) (mod (c * base) modulus) base exponent modulus
-				  else c
+-- SOLUTION 2 (Source: http://rosettacode.org/wiki/Modular_exponentiation#Haskell)
+-- exM' :: Integer -> Integer -> Integer -> Integer -> Integer
+-- exM' b 0 m r = r
+-- exM' b e m r | e `mod` 2 == 1 = exM' (b * b `mod` m) (e `div` 2) m (r * b `mod` m)
+-- exM' b e m r = exM' (b * b `mod` m) (e `div` 2) m r
+
+
+-- SOLUTION 3 (Source: http://en.wikipedia.org/wiki/Modular_exponentiation#Memory-efficient_method)
+--functional version of the algorithm found on wikipedia 
+-- exM' :: Integer -> Integer -> Integer -> Integer
+-- exM' base exponent modulus = exMR 0 1 base exponent modulus 
+
+-- exMR :: Integer -> Integer -> Integer -> Integer -> Integer -> Integer
+-- exMR i c base exponent modulus = if i < exponent
+-- 				  then exMR (i + 1) (mod (c * base) modulus) base exponent modulus
+-- 				  else c
 
 -- random tests to assure that our implementation comes up with the same result as the 'regular' mod operation
 
@@ -53,7 +70,8 @@ doRandomTest = do
 		   if 
 		    toInteger(expM (toInteger(x+1)) (toInteger(y+1)) (toInteger(z+1)))
 		      == 
-		    toInteger((Lab6.exM (toInteger(x+1)) (toInteger(y+1)) (toInteger(z+1))))
+--		    toInteger((exM' (toInteger(x+1)) (toInteger(y+1)) (toInteger(z+1))) 1) -- Solution  2
+		    toInteger((exM' (toInteger(x+1)) (toInteger(y+1)) (toInteger(z+1)))) -- Solution 1 & 3
 		   then return True
 		   else error ("exM gives not the same result as expM for "	 ++ (show (x+1)) ++ " , "  ++ (show (y+1)) ++ " ," ++ (show (z+1)))
 
