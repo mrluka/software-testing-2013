@@ -179,9 +179,6 @@ Notes (Task 3 & Task 4)
 
 ------ Source: http://en.literateprograms.org/Sieve_of_Eratosthenes_(Haskell)#Multiples_of_primes
 
-composites :: [Integer] -- list of prime integers above 1 that are (!) multiple of primes
-composites = []
-
 merge :: (Ord a) => [a] -> [a] -> [a] -- The merge function is a highly-specialized function that merges two infinite, sorted lists
 merge xs@(x:xt) ys@(y:yt) = 
   case compare x y of
@@ -202,8 +199,8 @@ diff xs@(x:xt) ys@(y:yt) =
 -- primes is a list consisting of the first three primes ([2,3,5]) with all odd numbers greater than that ([7,9..]), after the list of all non-prime numbers (nonprimes) is removed, appended to it.
 --primes, nonprimes :: [Integer] 
 --primes    = [2, 3, 5] ++ (diff [7, 9 ..] nonprimes) 
-nonprimes :: [Integer] 
-nonprimes = foldr1 f $ map g $ tail primes -- nonprimes = foldr1 f (map g (tail primes))
+composites :: [Integer] 
+composites = foldr1 f $ map g $ tail primes -- nonprimes = foldr1 f (map g (tail primes))
   where 
     f (x:xt) ys = x : (merge xt ys)
     g p         = [ n * p | n <- [p, p + 2 ..]] --The naming of the parameter strongly implies that it is a prime. The fact that it's applied to a list of known primes confirms this. This transformation is difficult to read at first. It helps to see the type of it. The type of this transformation is:
