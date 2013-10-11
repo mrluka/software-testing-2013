@@ -415,33 +415,42 @@ Task 7  --------------- --------------- --------------- --------------- --------
   on internet and check whether the numbers that you found are genuine Mersenne
   primes. Report on your findings.
 
-Die n-te Mersennezahl ist im Dualsystem eine Zahl mit n Einsen (Beispiel: M3 = 7 = 1112). 
+Following solution does not show 3 as Mersenne Prime because the millerRabinPrimality function implementation's preconditions does not accept 3 as number-to-check. To get a result from the millerRabin check, a must be greater than 1 (so at least number 2) and smaller than n-1:  a <= 1 || a >= n-1.
+N is the number to check whether or not it is a Prime. a is a arbitrarily (random) number. 
+3 is a Mersenne Prime, but it can not be evaluated by the mersennePrime function because it would not pass the precondition mentioned above. If n=3, then there is no possible way to pass the precondition.
 
-Large Prime, then check if ((2^p) -1) is Prime (With Miller-Rabin Check)
+
+Test results:
+findMersennePrime
+ Mersenne Prime found! ->  31 with base: 5 
+ Mersenne Prime found! ->  127 with base: 7 
+ Mersenne Prime found! ->  8191 with base: 13 
+ Mersenne Prime found! ->  131071 with base: 17 
+ Mersenne Prime found! ->  524287 with base: 19 
+ Mersenne Prime found! ->  2147483647 with base: 31 
+True
+(0.02 secs, 5736016 bytes)
 
 -}
 
--- mersennePrime :: Int -> IO Bool
--- mersennePrime n = mersennePrimeR n (filter (>2) primes)
 
-mersennePrime :: IO () --Bool
-mersennePrime = mersennePrimeR (filter (>3) primes)
+findMersennePrimes :: IO Bool
+findMersennePrimes = findMersennePrime (filter (>3) primes)--(filter (>3) primes) -- n > 3 because of millerRabinPrimality precondition (Wiki)
 
-mersennePrimeR :: [Integer] -> IO ()--Bool
---mersennePrimeR [] =  return True -- should not happen :) or better: should not happen with infinite list
-mersennePrimeR (x:xs) = do     
+findMersennePrime :: [Integer] -> IO Bool
+findMersennePrime [] =  error "Empty list in mersennePrimeR" -- should not happen :) or better: should not happen with infinite list
+findMersennePrime (x:xs) = do     
                           randBaseInt <- getRandomInt (fromIntegral (x-4)) 
                           let basePrim = (millerRabinPrimality x  (fromIntegral(randBaseInt+2)))
                           if(basePrim)
-                             then do let mersInt =  fromIntegral ((2^x) -1)
-                                     randMersInt <- getRandomInt  (mersInt-4) --(fromIntegral) 
---                                let randIntB = (mersInt-1) + randIntA
-                                     let isMersPri = (millerRabinPrimality (fromIntegral mersInt) (fromIntegral (randMersInt+2))) -- (fromIntegral randInt))
---                                let isXPri = (millerRabinPrimality x (fromIntegral randInt))
-                                     if(isMersPri) -- && isXPri )
-                                        then do (printf "\n Mersenne Prime found! ->  %d  \n" mersInt)
-                                                (mersennePrimeR xs)
-                                  --      return False
-                                      else do --(printf "%d " x) -- TEST- OUTPUT can be enabled to show all checked integers, low performance ! 
-                                               mersennePrimeR xs
-                                 else mersennePrimeR xs
+                             then do --(printf "%d"  x)
+                                     let mersInt =   ((2^x) -1)
+                                     if(mersInt < 0)
+                                        then return True
+                                        else do randMersInt <- getRandomInt  (mersInt-4) 
+                                                let isMersPri = (millerRabinPrimality (fromIntegral mersInt) (fromIntegral (randMersInt+2))) 
+                                                if(isMersPri)
+                                                   then do (printf "\n Mersenne Prime found! ->  %d with base: %d \n" mersInt x)
+                                                   else do (printf "") -- (printf " NOT %d base: %d \n" mersInt x) --findMersennePrime xs
+                                                (findMersennePrime xs)     
+                             else findMersennePrime xs
