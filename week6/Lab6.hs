@@ -216,7 +216,13 @@ Task 4 :
 Source: http://en.literateprograms.org/Sieve_of_Eratosthenes_(Haskell)#Multiples_of_primes
 There is more than two orders of magnitude difference between the naive implementation's performance and the improved implementation's when picking only the ten thousandth prime! Further, this disparity increases the farther into the list of prime numbers you delve. What's going on?
 --
+
+Source: Course Slides page 21
+If N is indeed prime then a^(N−1) ≡ 1 (mod N), and the test works fine.
+But if N is composite, it may still happen that a^(N−1) ≡ 1 (mod N), for Fermat’s Little Theorem does not specify what happens for composite numbers . . .
 -}
+
+
 
 {-
 Task 5 :

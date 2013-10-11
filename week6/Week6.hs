@@ -71,7 +71,12 @@ prime_test_F n = do
    a <- randomRIO (1, n-1) :: IO Integer
    return (exM a (n-1) n == 1)
 
-primeF :: Int -> Integer -> IO Bool
+
+--1. Pickawith1<a<N atrandom.
+--2. Compute aN−1 (mod N) using fast exponentiation.
+--3. If the outcome is 1, output ”Probably Prime”, otherwise output ”Composite”.
+
+primeF :: Int -> Integer -> IO Bool 
 primeF _ 2 = return True
 primeF 0 _ = return True
 primeF k n = do
