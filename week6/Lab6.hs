@@ -6,6 +6,7 @@ import System.Random
 import Week6
 import Techniques
 
+
 {- 
 Task 1 
   Implement a function exM that does modular exponentiation of x^y 
@@ -18,21 +19,21 @@ Task 1
 -}
 
 -- SOLUTION 1 (Source Week6.hs)
-exM' :: Integer -> Integer -> Integer -> Integer
-exM' _ 0 _ = 1
-exM' x y n = let 
-             z = exM' x (y `div` 2) n
-             w = multM z z n
-               in 
-               if even y then w
-               else multM x w n 
+-- exM' :: Integer -> Integer -> Integer -> Integer
+-- exM' _ 0 _ = 1
+-- exM' x y n = let 
+--               z = exM' x (y `div` 2) n
+--               w = multM z z n
+--                 in 
+--                 if even y then w
+--                 else multM x w n 
 
 
 -- SOLUTION 2 (Source: http://rosettacode.org/wiki/Modular_exponentiation#Haskell)
--- exM' :: Integer -> Integer -> Integer -> Integer -> Integer
--- exM' b 0 m r = r
--- exM' b e m r | e `mod` 2 == 1 = exM' (b * b `mod` m) (e `div` 2) m (r * b `mod` m)
--- exM' b e m r = exM' (b * b `mod` m) (e `div` 2) m r
+exM' :: Integer -> Integer -> Integer -> Integer -> Integer
+exM' b 0 m r = r
+exM' b e m r | e `mod` 2 == 1 = exM' (b * b `mod` m) (e `div` 2) m (r * b `mod` m)
+exM' b e m r = exM' (b * b `mod` m) (e `div` 2) m r
 
 
 -- SOLUTION 3 (Source: http://en.wikipedia.org/wiki/Modular_exponentiation#Memory-efficient_method)
@@ -44,6 +45,19 @@ exM' x y n = let
 -- exMR i c base exponent modulus = if i < exponent
 -- 				  then exMR (i + 1) (mod (c * base) modulus) base exponent modulus
 -- 				  else c
+
+-- SOLUTION 4 (Source: http://www.citidel.org/bitstream/10117/120/13/paper.pdf) 
+-- NOT tested
+-- expm :: Integer → Integer → Integer → Integer
+-- expm m b k =
+-- let
+-- ex a k s
+-- | k == 0 = s
+-- | k ‘mod‘ 2 == 0 = ((ex (a∗a ‘mod‘ m)) (k ‘div‘ 2)) s
+-- | otherwise = ((ex (a∗a ‘mod‘ m)) (k ‘div‘ 2)) (s∗a ‘mod‘ m)
+-- in ex b k 1
+
+
 
 -- random tests to assure that our implementation comes up with the same result as the 'regular' mod operation
 
@@ -70,8 +84,8 @@ doRandomTest = do
 		   if 
 		    toInteger(expM (toInteger(x+1)) (toInteger(y+1)) (toInteger(z+1)))
 		      == 
---		    toInteger((exM' (toInteger(x+1)) (toInteger(y+1)) (toInteger(z+1))) 1) -- Solution  2
-		    toInteger((exM' (toInteger(x+1)) (toInteger(y+1)) (toInteger(z+1)))) -- Solution 1 & 3
+		    toInteger((exM' (toInteger(x+1)) (toInteger(y+1)) (toInteger(z+1))) 1) -- Solution  2
+--		    toInteger((exM' (toInteger(x+1)) (toInteger(y+1)) (toInteger(z+1)))) -- Solution 1 & 3
 		   then return True
 		   else error ("exM gives not the same result as expM for "	 ++ (show (x+1)) ++ " , "  ++ (show (y+1)) ++ " ," ++ (show (z+1)))
 
@@ -83,7 +97,7 @@ Task2 :
 
 {-
 Bad news! It's slower and less efficient! :(  
-
+--------- Christian Setting 1
 *Lab6> expM 5 5000000 3			1	( 0.15 secs,   25264776 bytes)
 *Lab6> Lab6.exM 5 5000000 3		1	(11.54 secs, 2459061640 bytes)
 
@@ -94,7 +108,7 @@ Bad news! It's slower and less efficient! :(
 *Lab6> Lab6.exM 537 50000000 319 	*** Exception: stack overflow
 
 
---------Luka
+--------Luka Setting 1
 *Lab6> expM 5 5000000 3			1	(0.44 secs, 25210884 bytes)
 *Lab6> Lab6.exM 5 5000000 3		1       (8.40 secs, 1167222876 bytes)
 
@@ -103,6 +117,22 @@ Bad news! It's slower and less efficient! :(
 
 *Lab6> expM 537 50000000 319		23	(27.13 secs, 1055892216 bytes)
 *Lab6> Lab6.exM 537 50000000 319 	memory allocation failed (requested 2097152 bytes)
+
+------- Luka Setting 2
+Solution 1
+a) exM' 5 5000000 3 = 1           | (0.01 secs, 4133996 bytes)
+b) exM' 537 5000000 319 = 199     | (0.00 secs, 518112 bytes)
+c) exM' 537 50000000 319 = 23     | (0.00 secs, 518344 bytes)
+
+Solution 2 (Note: additional argument for Solution 2)
+a) exM' 5 5000000 3 1 = 1         | (0.01 secs, 4662088 bytes)
+b) exM' 537 5000000 319 1 = 199   | (0.00 secs, 517640 bytes)
+c) exM' 537 50000000 319 1 = 23   | (0.00 secs, 517716 bytes)
+
+Solution 3
+a) exM' 5 5000000 3 = 1           | (8.85 secs, 1170832296 bytes)
+b) exM' 537 5000000 319 = 199     | (8.77 secs, 1167226748 bytes)
+c) exM' 537 50000000 319 = 23     | (memory allocation failed (requested 1048576 bytes))
 
 -}
 
@@ -128,9 +158,55 @@ Notes (Task 3 & Task 4)
   Find integer produced by composites :: [Integer] that fails the primeF test
 
 -}
+-- Source: http://www.haskell.org/haskellwiki/Prime_numbers
+-- genuine yet wasteful sieve of Eratosthenes
+-- primesTo m = eratos [2..m]  where
+--    eratos []     = []
+--    eratos (p:xs) = p : eratos (xs `minus` [p, p+p..m])
+-- eratos (p:xs) = p : eratos (xs `minus` map (p*) [1..m])
+-- eulers (p:xs) = p : eulers (xs `minus` map (p*) (p:xs))  
+-- turner (p:xs) = p : turner [x | x <- xs, rem x p /= 0]
+-- primes' = 2 : 3 : ([5,7..] `minus` unionAll [[p*p, p*p+2*p..] | p <- tail primes'])
+
+-- minus (x:xs) (y:ys) = case (compare x y) of 
+--             LT -> x : minus  xs  (y:ys)
+--             EQ ->     minus  xs     ys 
+--             GT ->     minus (x:xs)  ys
+-- minus  xs     _     = xs
+
+-- unionAll = foldr (\(x:xs)->(x:).union xs) []
+
+
+------ Source: http://en.literateprograms.org/Sieve_of_Eratosthenes_(Haskell)#Multiples_of_primes
 
 composites :: [Integer] -- list of prime integers above 1 that are (!) multiple of primes
 composites = []
+
+merge :: (Ord a) => [a] -> [a] -> [a] -- The merge function is a highly-specialized function that merges two infinite, sorted lists
+merge xs@(x:xt) ys@(y:yt) = 
+  case compare x y of
+    LT -> x : (merge xt ys)
+    EQ -> x : (merge xt yt)
+    GT -> y : (merge xs yt)
+
+
+
+diff :: (Ord a) => [a] -> [a] -> [a] -- diff, in short, removes all of the elements of the second list passed to it from the first.
+diff xs@(x:xt) ys@(y:yt) = 
+  case compare x y of
+    LT -> x : (diff xt ys)
+    EQ -> diff xt yt
+    GT -> diff xs yt
+
+
+-- primes is a list consisting of the first three primes ([2,3,5]) with all odd numbers greater than that ([7,9..]), after the list of all non-prime numbers (nonprimes) is removed, appended to it.
+--primes, nonprimes :: [Integer] 
+--primes    = [2, 3, 5] ++ (diff [7, 9 ..] nonprimes) 
+nonprimes :: [Integer] 
+nonprimes = foldr1 f $ map g $ tail primes -- nonprimes = foldr1 f (map g (tail primes))
+  where 
+    f (x:xt) ys = x : (merge xt ys)
+    g p         = [ n * p | n <- [p, p + 2 ..]] --The naming of the parameter strongly implies that it is a prime. The fact that it's applied to a list of known primes confirms this. This transformation is difficult to read at first. It helps to see the type of it. The type of this transformation is:
 
 
 {-
@@ -138,6 +214,11 @@ Task 4 :
   Use the list of composite numbers (composites :: [Integer]) to test Fermat's primality check. What is the
   least composite number that you can find that fools the check, for testF k with
   k = 1; 2; 3 ? What happens if you increase k?
+
+--
+Source: http://en.literateprograms.org/Sieve_of_Eratosthenes_(Haskell)#Multiples_of_primes
+There is more than two orders of magnitude difference between the naive implementation's performance and the improved implementation's when picking only the ten thousandth prime! Further, this disparity increases the farther into the list of prime numbers you delve. What's going on?
+--
 -}
 
 {-
@@ -166,4 +247,10 @@ Task 7 :
   to check whether 2p  1 is also prime. Find information about Mersenne primes
   on internet and check whether the numbers that you found are genuine Mersenne
   primes. Report on your findings.
+
+Notes:
+http://de.wikipedia.org/wiki/Miller-Rabin-Test (#zuverlässigkeit)
+
+
+
 -}
