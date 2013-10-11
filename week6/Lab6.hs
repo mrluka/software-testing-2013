@@ -222,6 +222,27 @@ If N is indeed prime then a^(N−1) ≡ 1 (mod N), and the test works fine.
 But if N is composite, it may still happen that a^(N−1) ≡ 1 (mod N), for Fermat’s Little Theorem does not specify what happens for composite numbers . . .
 -}
 
+coPrTe :: Int -> IO Bool
+coPrTe n = comp_pr_test n composites
+-- prime_test_F always (?) returns right result
+-- primeF not?
+
+comp_pr_test :: Int -> [Integer] -> IO (Bool)
+comp_pr_test 0 _ =  return True
+comp_pr_test n (x:xs) = do
+                                   isPr <- primeF --prime_test_F x
+                                   if(isPr)
+                                     then do print x 
+                                             return False
+                                     else --do print "GO ON"
+                                             comp_pr_test (n-1) xs
+
+
+
+
+
+
+
 
 
 {-

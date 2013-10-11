@@ -73,7 +73,7 @@ prime_test_F n = do
 
 
 --1. Pickawith1<a<N atrandom.
---2. Compute aN−1 (mod N) using fast exponentiation.
+--2. Compute a^(N−1) (mod N) using fast exponentiation.
 --3. If the outcome is 1, output ”Probably Prime”, otherwise output ”Composite”.
 
 primeF :: Int -> Integer -> IO Bool 
