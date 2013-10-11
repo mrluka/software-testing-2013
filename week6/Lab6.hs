@@ -435,22 +435,40 @@ True
 
 
 findMersennePrimes :: IO Bool
-findMersennePrimes = findMersennePrime (filter (>3) primes)--(filter (>3) primes) -- n > 3 because of millerRabinPrimality precondition (Wiki)
+findMersennePrimes = findMersennePrime (filter (>15) primes)--(filter (>3) primes) -- n > 3 because of millerRabinPrimality precondition (Wiki)
 
 findMersennePrime :: [Integer] -> IO Bool
 findMersennePrime [] =  error "Empty list in mersennePrimeR" -- should not happen :) or better: should not happen with infinite list
 findMersennePrime (x:xs) = do     
-                          randBaseInt <- getRandomInt (fromIntegral (x-4)) 
-                          let basePrim = (millerRabinPrimality x  (fromIntegral(randBaseInt+2)))
+                          randBaseInt <- getRandomInt (2)  -- getRandomInt (fromIntegral (x-4)) 
+                          basePrim <- checkMillerRabin x -- (millerRabinPrimality x (fromIntegral(randBaseInt+2))) -- (millerRabinPrimality x  (fromIntegral(randBaseInt+2)))
                           if(basePrim)
-                             then do --(printf "%d"  x)
-                                     let mersInt =   ((2^x) -1)
+                             then do let mersInt =   toInteger((2^x) -1)
                                      if(mersInt < 0)
                                         then return True
-                                        else do randMersInt <- getRandomInt  (mersInt-4) 
-                                                let isMersPri = (millerRabinPrimality (fromIntegral mersInt) (fromIntegral (randMersInt+2))) 
+                                        else do randMersInt <- getRandomInt  (2) --randMersInt <- getRandomInt  (mersInt-4) 
+                                                isMersPri <- checkMillerRabin mersInt -- (millerRabinPrimality (fromIntegral mersInt) (fromIntegral(randMersInt+2))) -- (fromIntegral (randMersInt+2))) 
                                                 if(isMersPri)
                                                    then do (printf "\n Mersenne Prime found! ->  %d with base: %d \n" mersInt x)
                                                    else do (printf "") -- (printf " NOT %d base: %d \n" mersInt x) --findMersennePrime xs
                                                 (findMersennePrime xs)     
                              else findMersennePrime xs
+
+-- Runs checkMillerRabinPrimality X times and checks whether true or false was predominant. (Wiki page for Miller-Rabin ~: after 10 computations the chance to get the wrong result is 10^(-6).
+checkMillerRabin :: Integer -> IO Bool 
+checkMillerRabin p = do let allVals = (checkMillerRabinPrimality p 10)
+                        let tVals  = length (filter (== True) allVals)
+                        let fVals = length (filter (== False) allVals)
+                        (printf "t: %d f: %d \n"  tVals fVals) -- TEST-OUTPUT:True & False count of results from computation for p
+                        if((tVals > fVals))
+                            then return True
+                            else return False
+
+-- n, a, res (result list, contains results of each computation if n is prime or not.)
+checkMillerRabinPrimality :: Integer -> Integer -> [Bool]
+checkMillerRabinPrimality _ 1 = [] -- (True).(print " das")   -- ((length (filter (==True) res)) > (length (filter (==True) res)))
+checkMillerRabinPrimality n a =  (millerRabinPrimality n a) : (checkMillerRabinPrimality n (a-1))
+
+
+
+-- 279968092772225526319680285071055534765205687154331191862498637620473983897520118172609686658950889471
