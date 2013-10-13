@@ -1,7 +1,7 @@
 todo :
 
-Task 1 : implementation
-Task 2 : successful results / compare & document results (with different solutions)
+Task 1 : done
+Task 2 : done
 Task 3 : everything
 Task 4 : everything
 Task 5 : everything
@@ -10,8 +10,8 @@ Task 7 : everything
 
 done:
 
-task 1 : tests to assure implementation is OK
-task 2 : 
+task 1 : implementation, tests to assure implementation is OK
+task 2 : successful results
 Task 3 : 
 Task 4 :
 Task 5 :
@@ -22,4 +22,4 @@ Task 7 :
 time spent:
 
 task 1 : 5h CK (2h first approach, 1h tests, 2h second approach)
-task 2 : 2h CK (1h first approach, 1h second approach)
+task 2 : 3h CK (1h first approach, 1h second approach + 1h review & merging)
