@@ -235,7 +235,6 @@ But if N is composite, it may still happen that a^(N−1) ≡ 1 (mod N), for Fer
 
 
 -}
--- TODO check if composites works well! ! ! 
 comp_pr_test :: Int -> IO Bool
 comp_pr_test n = comp_pr_testR n composites
 
@@ -278,15 +277,9 @@ a)Read the entry on Carmichael numbers on Wikipedia to explain what you find.
 
 WIKI: http://en.wikipedia.org/wiki/Carmichael_number
 
--> Wikipedia says that 561 is the smallest Carmichael number, results (see below) show that 56052361 was often found, maybe in relation? (56052361 / 100000 = 560.5.. ~ 561)
-Because of the fact that the Carmichael numbers are positive composite integers and absolute Fermat pseudoprimes, they might get identified as prime number at the first glance. 
+The tests showed that running carmi_pr_test, but with different k values for primeF, that by increasing k, the wrongl identified numbers increase, too. This is a commonality to Task 4 where the results als increase by increasing k. 
 
-Test results (Settings:  primeF 100 x, high a= 100 because less likelihood to "predict" the result wrongly)
-
-carmi_pr_test 100   ->  118901521 tries to fool us! (0.02 secs, 3658212 bytes) (Occurred multiple times)
-carmi_pr_test 100   ->  56052361 tries to fool us! (0.01 secs, 2104332 bytes) (Occurred multiple times)
-carmi_pr_test 100   ->  216821881 tries to fool us! (0.03 secs, 3136508 bytes)
-
+Because of the characteristics of the Carmichael numbers, the Fermat's check can go wrong with every Carmichael number! Each number produced by the function carmichael is potentially dangerous and therefore, to increase the chance to get the right answer, the check should be repeated multiple times with the use of different values for k (as already mentioned in Task 4).
 
 -}
 
@@ -305,11 +298,11 @@ carmi_pr_test n = carmi_pr_testR n carmichael
 carmi_pr_testR :: Int -> [Integer] -> IO Bool
 carmi_pr_testR 0 _ =  return True
 carmi_pr_testR n (x:xs) = do
-                                   isPr <- primeF 100 x -- True->primeF is wrong, x is the composite of n primes, that implies it must not be a prime as itself
+                                   isPr <- primeF 2 x
                                    if(isPr)
                                      then do (printf "\n %d tries to fool us! \n" x)
                                              return False
-                                     else do --(printf "%d " x) -- TEST- OUTPUT can be enabled to show all checked integers, low performance ! 
+                                     else do
                                              carmi_pr_testR (n-1) xs
 
 {-
@@ -319,17 +312,7 @@ a) What do you find?
 
 WIKI: http://de.wikipedia.org/wiki/Miller-Rabin-Test#Zuverl.C3.A4ssigkeit
 
-Also the Miller-Rabin has a likelihood to give the wrong result (Monte-Carlo-Algorithm).  
-After 4 steps, the chance is smaller than 0.4% to be wrong. After 10 steps already 10^(-6)
-
-Results show: 
-I)Task 5 (Carmichael) test results showed the results 118901521, 56052361, 216821881 as primes, so does "primeF 100 216821881" most of the times! 
-(Even with 100 as first parameter, if first parameter is 1, the result is True with only few exceptions where it is False).
-The millerRabinPrimality (millerRabinPrimality 56052361 10) function exits with False with the three numbers (see above) resulted in False in all tests.
-
-II) millerRabinTest (millerRabinPrimality 172947529 1000) returns that 172947529 is a Prime (!!!), 
-but primeF (primeF 172947529 100) returns that it is not (!!!) a Prime! 
-
+The Miller-Rabin test returns 172947529 as prime, but it is a Carmichael pseudo prime. To get results with a higher chance to be right, the test should be executed multiple times but with different (random) parameters. This was tested with the function checkMillerRabin. It showed that the results are more precise by repeating the test with different random values. (This was tested by modifying the functions parameters, not auto-test present yet).
 -}
 
 
@@ -371,6 +354,22 @@ millerRabinPrimality n a
             | x == 1 = False
             | x == n' = True
             | otherwise = iter xs
+
+
+-- Runs checkMillerRabinPrimality X times and checks whether true or false was predominant. (Wiki page for Miller-Rabin ~: after 10 computations the chance to get the wrong result is 10^(-6).
+checkMillerRabin :: Integer -> IO Bool 
+checkMillerRabin p = do let allVals = (checkMillerRabinPrimality p 10)
+                        let tVals  = length (filter (== True) allVals)
+                        let fVals = length (filter (== False) allVals)
+                      --  (printf "t: %d f: %d \n"  tVals fVals) -- TEST-OUTPUT:True & False count of results from computation for p
+                        if((tVals > fVals))
+                            then return True
+                            else return False
+
+
+checkMillerRabinPrimality :: Integer -> Integer -> [Bool]
+checkMillerRabinPrimality _ 1 = [] 
+checkMillerRabinPrimality n a =  (millerRabinPrimality n a) : (checkMillerRabinPrimality n (a-1))
 
 
 -- (eq. to) find2km (2^k * n) = (k,n)
@@ -456,20 +455,7 @@ findMersennePrime (x:xs) = do
                                                 (findMersennePrime xs)     
                              else findMersennePrime xs
 
--- Runs checkMillerRabinPrimality X times and checks whether true or false was predominant. (Wiki page for Miller-Rabin ~: after 10 computations the chance to get the wrong result is 10^(-6).
-checkMillerRabin :: Integer -> IO Bool 
-checkMillerRabin p = do let allVals = (checkMillerRabinPrimality p 10)
-                        let tVals  = length (filter (== True) allVals)
-                        let fVals = length (filter (== False) allVals)
-                      --  (printf "t: %d f: %d \n"  tVals fVals) -- TEST-OUTPUT:True & False count of results from computation for p
-                        if((tVals > fVals))
-                            then return True
-                            else return False
 
-
-checkMillerRabinPrimality :: Integer -> Integer -> [Bool]
-checkMillerRabinPrimality _ 1 = [] 
-checkMillerRabinPrimality n a =  (millerRabinPrimality n a) : (checkMillerRabinPrimality n (a-1))
 
 
 
