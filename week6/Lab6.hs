@@ -160,38 +160,89 @@ composites = foldr1 f $ map g $ tail primes
 {-
  ----- Task 4 --------------- --------------- --------------- --------------- --------------- --------------- --------------- 4 
   Use the list of composite numbers (composites :: [Integer]) to test Fermat's primality check. 
-a) What is the  least composite number that you can find that fools the check, for testF k with  k = 1; 2; 3?
-   -> TODO 
+
+a) What is the least composite number that you can find that fools the check, for testF k with  k = 1; 2; 3?
+
+The following test results show the results where the function pr
+Test setting: k = 1
+comp_pr_test 100000 
+9 tries to fool us! 
+27 tries to fool us! 
+45 tries to fool us! 
+217 tries to fool us! 
+259 tries to fool us! 
+561 tries to fool us! 
+703 tries to fool us! 
+1105 tries to fool us!
+1729 tries to fool us!
+2821 tries to fool us! 
+----
+
+Test setting: k = 2
+comp_pr_test 100000 
+9 tries to fool us! 
+65 tries to fool us! 
+153 tries to fool us! 
+165 tries to fool us!
+217 tries to fool us! 
+301 tries to fool us! 
+341 tries to fool us! 
+425 tries to fool us! 
+561 tries to fool us! 
+703 tries to fool us! 
+1105 tries to fool us! 
+1387 tries to fool us! 
+1729 tries to fool us!
+----
+
+Test setting: k = 3
+comp_pr_test 100000 
+91 tries to fool us! 
+561 tries to fool us! (often)
+703 tries to fool us! (often)
+1105 tries to fool us! (often)
+1729 tries to fool us! (often)
+1891 tries to fool us! (often)
+2821 tries to fool us! (quite often)
+6601 tries to fool us! (quite often)
+----
+
+Test setting: k = 4
+comp_pr_test 100000 
+561 tries to fool us! (often)
+703 tries to fool us! (often)
+1105 tries to fool us! (often)
+1729 tries to fool us! (often)
+2465 tries to fool us! (often)
+8911 tries to fool us! (often)
+2465 tries to fool us! (often)
+
+
+
 b) What happens if you increase k?
-   The likelihood that the Fermat's primality check "guesses" the wrong result decreases by increasing k. (First argument of primeF).
-   A high random rumber increases the reliability for the check; but increases processing-time, too.
+  By increasing K, the test results, compared to each other, in average show higher numbers. 
+  Interesting is that each setting for K has different results but that some of the numbers were found with each test setting: 561, 1105, 1729. 
+The best way would maybe be to run primeF multiple times with k-1 and use the union of all sets produced by each step. By doing this, the chances for a wrongly identified prime decreases,..(we think)
 
 --
 Source: http://en.literateprograms.org/Sieve_of_Eratosthenes_(Haskell)#Multiples_of_primes
 There is more than two orders of magnitude difference between the naive implementation's performance and the improved implementation's when picking only the ten thousandth prime! Further, this disparity increases the farther into the list of prime numbers you delve. What's going on?
 --
 
-Source: Course Slides page 21
+Source: Course slides page 21
 If N is indeed prime then a^(N−1) ≡ 1 (mod N), and the test works fine.
 But if N is composite, it may still happen that a^(N−1) ≡ 1 (mod N), for Fermat’s Little Theorem does not specify what happens for composite numbers . . .
 
-Test results (Settings:  primeF 100 x, high a= 100 because less likelihood to "predict" the result wrongly)
-
-comp_pr_test 10000000   -> 10267951 tries to fool us! False (600.72 secs, 87380096572 bytes)
-comp_pr_test 10000000   -> 2508013 tries to fool us! False (66.72 secs, 11615076404 bytes)
-comp_pr_test 10000000   -> 17098369 tries to fool us! (1279.73 secs, 170832519200 bytes)
-
-
 
 -}
-
+-- TODO check if composites works well! ! ! 
 comp_pr_test :: Int -> IO Bool
 comp_pr_test n = comp_pr_testR n composites
 
 comp_pr_testR :: Int -> [Integer] -> IO (Bool)
 comp_pr_testR 0 _ =  return True
 comp_pr_testR n (x:xs) = do
-                                   isPr <- primeF 3 x -- True->primeF is wrong, x is the composite of n primes, that implies it must not be a prime as itself
+                                   isPr <- primeF 2 x -- True->primeF is wrong, x is the composite of n primes, that implies it must not be a prime as itself
                                    if(isPr)
                                      then do (printf "\n %d tries to fool us! \n" x)
                                              return False
@@ -199,20 +250,20 @@ comp_pr_testR n (x:xs) = do
                                              comp_pr_testR (n-1) xs
 
 
--- b) TESTS for: What happens if you increase k? 
-prime1Test :: Int ->  IO Bool --LOWEST likelihood to have right result (x=1)
+-- b) TESTS with static number to check, for: What happens if you increase k? 
+prime1Test :: Int ->  IO Bool 
 prime1Test n = primeXTest n 1
 
-prime2Test :: Int ->  IO Bool --likelihood factor of 2 to have right result (x=2)
+prime2Test :: Int ->  IO Bool 
 prime2Test n = primeXTest n 2
 
-prime3Test :: Int ->  IO Bool --likelihood factor of 3 to have right result (x=3)
+prime3Test :: Int ->  IO Bool 
 prime3Test n = primeXTest n 3
 
-prime10Test :: Int ->  IO Bool --likelihood factor of 10 to have right result (x=10)
+prime10Test :: Int ->  IO Bool 
 prime10Test n = primeXTest n 4
 
-primeXTest :: Int -> Int -> IO Bool --low likelihood to have right result
+primeXTest :: Int -> Int -> IO Bool
 primeXTest 0 _= return False
 primeXTest n x= do res <- primeF x 63 -- CAUTION! static integer to check whether is prime or not. 
                    if (res)
