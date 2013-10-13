@@ -1,26 +1,19 @@
 -> Search for TODO in code
-todo :
-
-Task 1 : done
-Task 2 : done
-Task 3 : everything
-Task 4 : everything
-Task 5 : everything
-Task 6 : everything
-Task 7 : everything
 
 done:
 
 task 1 : implementation, tests to assure implementation is OK
 task 2 : successful results
-Task 3 : 
-Task 4 :
-Task 5 :
-Task 6 :
-Task 7 :
+Task 3 : done
+Task 4 : done
+Task 5 : done
+Task 6 : done
+Task 7 : done
 
 
 time spent:
 
 task 1 : 5h CK (2h first approach, 1h tests, 2h second approach)
 task 2 : 3h CK (1h first approach, 1h second approach + 1h review & merging)
+
+Task 1-7 Luka: 12h
