@@ -108,7 +108,7 @@ Notes (Task 3 & Task 4)
   Modify Eratosthenes sieve so that it marks compound integers as false 
   Fermat's Primality Check can go wrong 
   Where the check can go wrong is on classifying composite numbers; these can slip through the Fermat test.
-  composites :: [Integer] should generate only prime nubers that are composite: integer above 1 that are (!) multiple of primes
+  composites :: [Integer] should generate only nubers that are composite: integer above 1 that are (!) multiple of primes
   Find integer produced by composites :: [Integer] that fails the primeF test
 
 -}
@@ -150,22 +150,18 @@ diff xs@(x:xt) ys@(y:yt) =
     GT -> diff xs yt
 
 
--- primes is a list consisting of the first three primes ([2,3,5]) with all odd numbers greater than that ([7,9..]),
--- after the list of all non-prime numbers (nonprimes) is removed, appended to it.
---primes, nonprimes :: [Integer] 
---primes    = [2, 3, 5] ++ (diff [7, 9 ..] nonprimes) 
 composites :: [Integer] 
-composites = foldr1 f $ map g $ tail primes -- nonprimes = foldr1 f (map g (tail primes))
+composites = foldr1 f $ map g $ tail primes 
   where 
     f (x:xt) ys = x : (merge xt ys)
-    g p         = [ n * p | n <- [p, p + 2 ..]] --The naming of the parameter strongly implies that it is a prime. The fact that it's applied to a list of known primes confirms this. This transformation is difficult to read at first. It helps to see the type of it. The type of this transformation is:
+    g p         = [ n * p | n <- [p, p + 2 ..]]
 
 
 {-
  ----- Task 4 --------------- --------------- --------------- --------------- --------------- --------------- --------------- 4 
   Use the list of composite numbers (composites :: [Integer]) to test Fermat's primality check. 
 a) What is the  least composite number that you can find that fools the check, for testF k with  k = 1; 2; 3?
-   
+   -> TODO 
 b) What happens if you increase k?
    The likelihood that the Fermat's primality check "guesses" the wrong result decreases by increasing k. (First argument of primeF).
    A high random rumber increases the reliability for the check; but increases processing-time, too.
@@ -203,7 +199,7 @@ comp_pr_testR n (x:xs) = do
                                              comp_pr_testR (n-1) xs
 
 
--- b) What happens if you increase k? TESTS
+-- b) TESTS for: What happens if you increase k? 
 prime1Test :: Int ->  IO Bool --LOWEST likelihood to have right result (x=1)
 prime1Test n = primeXTest n 1
 
@@ -231,13 +227,8 @@ a)Read the entry on Carmichael numbers on Wikipedia to explain what you find.
 
 WIKI: http://en.wikipedia.org/wiki/Carmichael_number
 
--> Wikipedia says that 561 is smallest Carmichael number, results (see below) show that 56052361 was often found, maybe in relation? (56052361 / 100000 = 560.5.. ~ 561)
+-> Wikipedia says that 561 is the smallest Carmichael number, results (see below) show that 56052361 was often found, maybe in relation? (56052361 / 100000 = 560.5.. ~ 561)
 Because of the fact that the Carmichael numbers are positive composite integers and absolute Fermat pseudoprimes, they might get identified as prime number at the first glance. 
-
-Definition
-Eine zusammengesetzte natürliche Zahl n heißt Carmichael-Zahl, falls für alle zu n teilerfremden Zahlen a die folgende Kongruenz erfüllt ist:
- a^{n-1} \equiv 1 \mod n .
-561 smallest Carmichael number
 
 Test results (Settings:  primeF 100 x, high a= 100 because less likelihood to "predict" the result wrongly)
 
@@ -281,12 +272,12 @@ Also the Miller-Rabin has a likelihood to give the wrong result (Monte-Carlo-Alg
 After 4 steps, the chance is smaller than 0.4% to be wrong. After 10 steps already 10^(-6)
 
 Results show: 
-I)Task 5 (Carmichael) test results showed the results 118901521, 56052361, 216821881 as a prime, so does "primeF 100 216821881" most of the times! 
+I)Task 5 (Carmichael) test results showed the results 118901521, 56052361, 216821881 as primes, so does "primeF 100 216821881" most of the times! 
 (Even with 100 as first parameter, if first parameter is 1, the result is True with only few exceptions where it is False).
 The millerRabinPrimality (millerRabinPrimality 56052361 10) function exits with False with the three numbers (see above) resulted in False in all tests.
 
 II) millerRabinTest (millerRabinPrimality 172947529 1000) returns that 172947529 is a Prime (!!!), 
-but primeF (primeF 172947529 100) returns that it is not a Prime! 
+but primeF (primeF 172947529 100) returns that it is not (!!!) a Prime! 
 
 -}
 
@@ -330,8 +321,6 @@ millerRabinPrimality n a
             | x == n' = True
             | otherwise = iter xs
 
-
---
 
 -- (eq. to) find2km (2^k * n) = (k,n)
 find2km :: Integral a => a -> (a,a)
@@ -389,27 +378,27 @@ findMersennePrime
  Mersenne Prime found! ->  131071 with base: 17 
  Mersenne Prime found! ->  524287 with base: 19 
  Mersenne Prime found! ->  2147483647 with base: 31 
--->> At the end of this file is a complete listing of all found Mersenne Primes
 True
 (0.02 secs, 5736016 bytes)
+
+-->> At the end of this file is a complete listing of all found Mersenne Primes TODO
 
 -}
 
 
 findMersennePrimes :: IO Bool
-findMersennePrimes = findMersennePrime (filter (>15) primes)--(filter (>3) primes) -- n > 3 because of millerRabinPrimality precondition (Wiki)
+findMersennePrimes = findMersennePrime (filter (>15) primes)
 
 findMersennePrime :: [Integer] -> IO Bool
 findMersennePrime [] =  error "Empty list in mersennePrimeR" -- should not happen :) or better: should not happen with infinite list
 findMersennePrime (x:xs) = do     
---                          randBaseInt <- getRandomInt (2)  -- getRandomInt (fromIntegral (x-4)) 
-                          basePrim <- checkMillerRabin x -- (millerRabinPrimality x (fromIntegral(randBaseInt+2))) -- (millerRabinPrimality x  (fromIntegral(randBaseInt+2)))
+                          basePrim <- checkMillerRabin x 
                           if(basePrim)
                              then do let mersInt =   toInteger((2^x) -1)
                                      if(mersInt < 0)
                                         then return True
-                                        else do -- randMersInt <- getRandomInt  (2) --randMersInt <- getRandomInt  (mersInt-4) 
-                                                isMersPri <- checkMillerRabin mersInt -- (millerRabinPrimality (fromIntegral mersInt) (fromIntegral(randMersInt+2))) -- (fromIntegral (randMersInt+2))) 
+                                        else do 
+                                                isMersPri <- checkMillerRabin mersInt
                                                 if(isMersPri)
                                                    then do (printf "\n Mersenne Prime found! ->  %d with base: %d \n" mersInt x)
                                                    else do (printf "") -- (printf " NOT %d base: %d \n" mersInt x) --findMersennePrime xs
@@ -426,7 +415,7 @@ checkMillerRabin p = do let allVals = (checkMillerRabinPrimality p 10)
                             then return True
                             else return False
 
--- n, a
+
 checkMillerRabinPrimality :: Integer -> Integer -> [Bool]
 checkMillerRabinPrimality _ 1 = [] 
 checkMillerRabinPrimality n a =  (millerRabinPrimality n a) : (checkMillerRabinPrimality n (a-1))
